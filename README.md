@@ -1,1 +1,1 @@
-This is going to hold my code for the sensor bot
+I don't feel like making a good README lol
