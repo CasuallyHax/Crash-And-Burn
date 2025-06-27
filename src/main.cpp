@@ -1,7 +1,7 @@
 #include "main.h"
 #include "lemlib/api.hpp" // IWYU pragma: keep
 #include "lemlib/chassis/chassis.hpp"
-
+ASSET(PushBackAutons1);
 
 pros::MotorGroup left_motors({-11}, pros::MotorGearset::green); // left motors on ports 1, 2, 3
 pros::MotorGroup right_motors({1}, pros::MotorGearset::green); // right motors on ports 4, 5, 6
@@ -70,14 +70,14 @@ lemlib::ControllerSettings lateral_controller(20, // proportional gain (kP)
 );
 
 // angular PID controller
-lemlib::ControllerSettings angular_controller(2, // proportional gain (kP)
+lemlib::ControllerSettings angular_controller(4, // proportional gain (kP)
                                               0, // integral gain (kI)
-                                              10, // derivative gain (kD)
-                                              3, // anti windup
-                                              1, // small error range, in degrees
-                                              100, // small error range timeout, in milliseconds
-                                              3, // large error range, in degrees
-                                              500, // large error range timeout, in milliseconds
+                                              30, // derivative gain (kD)
+                                              0, // anti windup
+                                              0, // small error range, in degrees
+                                              0, // small error range timeout, in milliseconds
+                                              0, // large error range, in degrees
+                                              0, // large error range timeout, in milliseconds
                                               0 // maximum acceleration (slew)
 );
 
@@ -139,11 +139,10 @@ void autonomous() {
 
     //PID tuning, comment out when not using
     //Lateral PID tuning
-    chassis.moveToPoint(0,24, 10000);
+//    chassis.moveToPoint(0,24, 10000);
 
     //Angular PID tuning
-    //chassis.turnToHeading(90,10000);
-
+    chassis.follow(PushBackAutons1, 15, 20000);
 
 }
 
