@@ -1,7 +1,7 @@
 #include "main.h"
 #include "lemlib/api.hpp" // IWYU pragma: keep
 #include "lemlib/chassis/chassis.hpp"
-ASSET(PushBackAutons1);
+//ASSET(PushBackAutons1);
 
 pros::MotorGroup left_motors({-11}, pros::MotorGearset::green); // left motors on ports 1, 2, 3
 pros::MotorGroup right_motors({1}, pros::MotorGearset::green); // right motors on ports 4, 5, 6
@@ -142,7 +142,7 @@ void autonomous() {
 //    chassis.moveToPoint(0,24, 10000);
 
     //Angular PID tuning
-    chassis.follow(PushBackAutons1, 15, 20000);
+//    chassis.follow(PushBackAutons1, 15, 20000);
 
 }
 
