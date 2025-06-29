@@ -1,7 +1,7 @@
 #include "main.h"
 #include "lemlib/api.hpp" // IWYU pragma: keep
 #include "lemlib/chassis/chassis.hpp"
-ASSET(PushBackAutons1);
+ASSET(PushBackAutons1_txt);
 
 pros::MotorGroup left_motors({-11}, pros::MotorGearset::green); // left motors on ports 1, 2, 3
 pros::MotorGroup right_motors({1}, pros::MotorGearset::green); // right motors on ports 4, 5, 6
@@ -46,9 +46,9 @@ pros::Imu imu(3);
 // }
 
 // vertical tracking wheel
-lemlib::TrackingWheel vertical_tracking_wheel(&vertical_tracker, lemlib::Omniwheel::NEW_275, -1);
+lemlib::TrackingWheel vertical_tracking_wheel(&vertical_tracker, lemlib::Omniwheel::OLD_275, -1);
 
-lemlib::TrackingWheel horizontal_tracking_wheel(&horizontal_tracker, lemlib::Omniwheel::NEW_275, -7.5);
+lemlib::TrackingWheel horizontal_tracking_wheel(&horizontal_tracker, lemlib::Omniwheel::OLD_275, -7.5);
 
 lemlib::OdomSensors sensors(&vertical_tracking_wheel, // vertical tracking wheel 1, set to null
                             nullptr, // vertical tracking wheel 2, set to nullptr as we are using IMEs
@@ -135,14 +135,14 @@ void competition_initialize() {}
  * from where it left off.
  */
 void autonomous() {
-    chassis.setPose(0,0,0);
+//    chassis.setPose(0,0,0);
 
     //PID tuning, comment out when not using
     //Lateral PID tuning
 //    chassis.moveToPoint(0,24, 10000);
 
     //Pure Pursuit
-    chassis.follow(PushBackAutons1, 15, 20000);
+    chassis.follow(PushBackAutons1_txt, 15, 20000);
 
 }
 
