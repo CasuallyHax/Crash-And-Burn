@@ -1,0 +1,33 @@
+-9.456, -9.498, 96.966
+-10.95, -10.827, 97.225
+-12.421, -12.183, 97.785
+-13.872, -13.559, 98.384
+-15.309, -14.95, 99.001
+-16.736, -16.352, 97.693
+-18.159, -17.757, 95.057
+-19.583, -19.161, 92.347
+-21.013, -20.56, 89.554
+-22.452, -21.948, 86.671
+-23.905, -23.323, 83.689
+-25.375, -24.679, 80.597
+-26.865, -26.013, 77.382
+-28.374, -27.325, 74.026
+-29.905, -28.612, 70.512
+-31.46, -29.87, 66.813
+-33.036, -31.101, 62.896
+-34.635, -32.302, 58.719
+-36.256, -33.474, 54.221
+-37.898, -34.616, 49.315
+-39.559, -35.73, 43.863
+-41.241, -36.811, 37.63
+-42.941, -37.866, 30.133
+-44.656, -38.894, 20
+-45.259, -39.246, 0
+-45.259, -39.246, 0
+-62.525, -49.34, 0
+endData
+127
+100
+200
+-9.456, -9.498, -19.723, -18.449, -27.094, -28.716, -45.259, -39.246
+#PATH.JERRYIO-DATA {"appVersion":"0.10.0","format":"LemLib v0.5","gc":{"robotWidth":12,"robotHeight":12,"robotIsHolonomic":false,"showRobot":false,"uol":2.54,"pointDensity":2,"controlMagnetDistance":1.968503937007874,"fieldImage":{"displayName":"V5RC 2026 - Push Back","signature":"V5RC-PushBack-H2H-TopDownHighlighted-TileColor66_71","origin":{"__type":"built-in"}},"coordinateSystem":"Path-Based Strict Coordinates"},"paths":[{"segments":[{"controls":[{"uid":"83BN9gII8M","x":-9.456,"y":-9.498,"lock":false,"visible":true,"heading":45,"__type":"end-point"},{"uid":"9oOK4lXBbv","x":-19.723193759231822,"y":-18.44903121525581,"lock":false,"visible":true,"__type":"control"},{"uid":"L3x7LmFrlL","x":-27.094382030167374,"y":-28.716043449773174,"lock":false,"visible":true,"__type":"control"},{"uid":"VuaaNYdgiT","x":-45.259,"y":-39.246,"lock":false,"visible":true,"heading":45,"__type":"end-point"}],"speedProfiles":[],"lookaheadKeyframes":[],"uid":"YdphUQgIL3"}],"pc":{"speedLimit":{"minLimit":{"value":0,"label":"0"},"maxLimit":{"value":127,"label":"127"},"step":1,"from":20,"to":100},"bentRateApplicableRange":{"minLimit":{"value":0,"label":"0"},"maxLimit":{"value":1,"label":"1"},"step":0.001,"from":0,"to":0.1},"maxDecelerationRate":127},"name":"Path","uid":"JLZVKselvz","lock":false,"visible":true}]}

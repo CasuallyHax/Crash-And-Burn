@@ -2,6 +2,15 @@
 #include "lemlib/api.hpp" // IWYU pragma: keep
 #include "lemlib/chassis/chassis.hpp"
 ASSET(PushBackAutons1_txt);
+ASSET(PushBackAutons2_txt);
+ASSET(PBAutons0_txt);
+ASSET(PBAutons1_txt);
+ASSET(PBAutons2_txt);
+ASSET(PBAutons3_txt);
+ASSET(PBAutons4_txt);
+ASSET(PBAutons5_txt);
+ASSET(PBAutons6_txt);
+ASSET(PBAutons7_txt);
 
 pros::MotorGroup left_motors({-11}, pros::MotorGearset::green); // left motors on ports 1, 2, 3
 pros::MotorGroup right_motors({1}, pros::MotorGearset::green); // right motors on ports 4, 5, 6
@@ -135,15 +144,20 @@ void competition_initialize() {}
  * from where it left off.
  */
 void autonomous() {
-//    chassis.setPose(0,0,0);
+    chassis.setPose(0,0,0);
 
     //PID tuning, comment out when not using
     //Lateral PID tuning
 //    chassis.moveToPoint(0,24, 10000);
 
     //Pure Pursuit
-    chassis.follow(PushBackAutons1_txt, 15, 20000);
-
+    chassis.follow(PBAutons1_txt, 15, 20000,true,false);
+    chassis.follow(PBAutons2_txt, 15, 20000,false,false);
+    chassis.follow(PBAutons3_txt, 15, 20000,true,false);
+    chassis.follow(PBAutons4_txt, 15, 20000,false,false);
+    chassis.follow(PBAutons5_txt, 15, 20000,true,false);
+    chassis.follow(PBAutons6_txt, 15, 20000,false,false);
+    chassis.follow(PBAutons7_txt, 15, 20000,true,false);
 }
 
 /**

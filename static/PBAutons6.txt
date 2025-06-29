@@ -1,0 +1,17 @@
+-61.581, -47.671, 62.897
+-59.581, -47.671, 58.72
+-57.581, -47.671, 54.222
+-55.581, -47.671, 49.315
+-53.581, -47.671, 43.863
+-51.581, -47.671, 37.63
+-49.581, -47.671, 30.133
+-47.581, -47.671, 20
+-47.365, -47.671, 0
+-47.365, -47.671, 0
+-27.365, -47.671, 0
+endData
+127
+100
+200
+-61.581, -47.671, -54.473, -47.671, -54.473, -47.671, -47.365, -47.671
+#PATH.JERRYIO-DATA {"appVersion":"0.10.0","format":"LemLib v0.5","gc":{"robotWidth":12,"robotHeight":12,"robotIsHolonomic":false,"showRobot":false,"uol":2.54,"pointDensity":2,"controlMagnetDistance":1.968503937007874,"fieldImage":{"displayName":"V5RC 2026 - Push Back","signature":"V5RC-PushBack-H2H-TopDownHighlighted-TileColor66_71","origin":{"__type":"built-in"}},"coordinateSystem":"Path-Based Strict Coordinates"},"paths":[{"segments":[{"controls":[{"uid":"Kzx7wAV3PT","x":-61.581,"y":-47.671,"lock":false,"visible":true,"heading":270,"__type":"end-point"},{"uid":"SgR3InMGy8","x":-47.365,"y":-47.671,"lock":false,"visible":true,"heading":270,"__type":"end-point"}],"speedProfiles":[],"lookaheadKeyframes":[],"uid":"MHsu71m6c4"}],"pc":{"speedLimit":{"minLimit":{"value":0,"label":"0"},"maxLimit":{"value":127,"label":"127"},"step":1,"from":20,"to":100},"bentRateApplicableRange":{"minLimit":{"value":0,"label":"0"},"maxLimit":{"value":1,"label":"1"},"step":0.001,"from":0,"to":0.1},"maxDecelerationRate":127},"name":"Path","uid":"xYHyxWAl5e","lock":false,"visible":true}]}
