@@ -3,8 +3,6 @@
 #include "lemlib/chassis/chassis.hpp"
 #include "pros/apix.h" // IWYU pragma: keep
 
-ASSET(PushBackAutons1_txt);
-ASSET(PushBackAutons2_txt);
 ASSET(PBAutons0_txt);
 ASSET(PBAutons1_txt);
 ASSET(PBAutons2_txt);
