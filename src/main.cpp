@@ -1,6 +1,8 @@
 #include "main.h"
 #include "lemlib/api.hpp" // IWYU pragma: keep
 #include "lemlib/chassis/chassis.hpp"
+#include "pros/apix.h"
+
 ASSET(PushBackAutons1_txt);
 ASSET(PushBackAutons2_txt);
 ASSET(PBAutons0_txt);
@@ -151,7 +153,7 @@ void autonomous() {
 //    chassis.moveToPoint(0,24, 10000);
 
     //Pure Pursuit
-    chassis.follow(PBAutons1_txt, 15, 20000,true,false);
+    chassis.follow(PBAutons1_txt, 15, 20000,true,false);  
     chassis.follow(PBAutons2_txt, 15, 20000,false,false);
     chassis.follow(PBAutons3_txt, 15, 20000,true,false);
     chassis.follow(PBAutons4_txt, 15, 20000,false,false);
