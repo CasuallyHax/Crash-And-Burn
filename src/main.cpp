@@ -1,7 +1,7 @@
 #include "main.h"
 #include "lemlib/api.hpp" // IWYU pragma: keep
 #include "lemlib/chassis/chassis.hpp"
-#include "pros/apix.h"
+#include "pros/apix.h" // IWYU pragma: keep
 
 ASSET(PushBackAutons1_txt);
 ASSET(PushBackAutons2_txt);
