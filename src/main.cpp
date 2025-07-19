@@ -148,7 +148,8 @@ void autonomous() {
 
     //PID tuning, comment out when not using
     //Lateral PID tuning
-//    chassis.moveToPoint(0,24, 10000);
+    // chassis.setPose(0,0,0);
+    // chassis.moveToPoint(0,24, 10000);
 
     //Pure Pursuit
     chassis.follow(PBAutons1_txt, 15, 20000);  
