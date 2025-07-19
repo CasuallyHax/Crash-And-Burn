@@ -144,22 +144,22 @@ void competition_initialize() {}
  * from where it left off.
  */
 void autonomous() {
-    chassis.setPose(0,0,0);
+    chassis.setPose(-62.897,-15.027,90);
 
     //PID tuning, comment out when not using
     //Lateral PID tuning
 //    chassis.moveToPoint(0,24, 10000);
 
     //Pure Pursuit
-    chassis.follow(PBAutons1_txt, 15, 20000,true,false);  
-    chassis.follow(PBAutons2_txt, 15, 20000,false,false);
-    chassis.follow(PBAutons3_txt, 15, 20000,true,false);
-    chassis.follow(PBAutons4_txt, 15, 20000,false,false);
-    chassis.follow(PBAutons5_txt, 15, 20000,true,false);
-    chassis.follow(PBAutons6_txt, 15, 20000,false,false);
-    chassis.follow(PBAutons7_txt, 15, 20000,true,false);
+    chassis.follow(PBAutons1_txt, 15, 20000);  
+    chassis.follow(PBAutons2_txt, 15, 20000,false);
+    chassis.follow(PBAutons3_txt, 15, 20000);
+    chassis.follow(PBAutons4_txt, 15, 20000,false);
+    chassis.follow(PBAutons5_txt, 15, 20000);
+    chassis.follow(PBAutons6_txt, 15, 20000,false);
+    chassis.follow(PBAutons7_txt, 15, 20000);
 }
-
+ 
 /**
  * Runs the operator control code. This function will be started in its own task
  * with the default priority and stack size whenever the robot is enabled via
