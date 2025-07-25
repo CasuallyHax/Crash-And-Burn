@@ -24,8 +24,8 @@ pros::Rotation horizontal_tracker(10);
 // drivetrain settings
 lemlib::Drivetrain drivetrain(&left_motors, // left motor group
                               &right_motors, // right motor group
-                              9.75, // 10 inch track width
-                              lemlib::Omniwheel::NEW_325, // using new 4" omnis
+                              9.6875, // 10 inch track width
+                              lemlib::Omniwheel::OLD_325, // using new 4" omnis
                               200, // drivetrain rpm is 360
                               2 // horizontal drift is 2 (for now)
 );
@@ -55,9 +55,9 @@ pros::Imu imu(3);
 // }
 
 // vertical tracking wheel
-lemlib::TrackingWheel vertical_tracking_wheel(&vertical_tracker, lemlib::Omniwheel::OLD_275, -1);
+lemlib::TrackingWheel vertical_tracking_wheel(&vertical_tracker, lemlib::Omniwheel::NEW_275, -.5);
 
-lemlib::TrackingWheel horizontal_tracking_wheel(&horizontal_tracker, lemlib::Omniwheel::OLD_275, -7.5);
+lemlib::TrackingWheel horizontal_tracking_wheel(&horizontal_tracker, lemlib::Omniwheel::NEW_275, -6.5);
 
 lemlib::OdomSensors sensors(&vertical_tracking_wheel, // vertical tracking wheel 1, set to null
                             nullptr, // vertical tracking wheel 2, set to nullptr as we are using IMEs
@@ -79,13 +79,13 @@ lemlib::ControllerSettings lateral_controller(20, // proportional gain (kP)
 );
 
 // angular PID controller
-lemlib::ControllerSettings angular_controller(4, // proportional gain (kP)
-                                              0, // integral gain (kI)
-                                              30, // derivative gain (kD)
+lemlib::ControllerSettings angular_controller(3, // proportional gain (kP)
+                                              .5, // integral gain (kI)
+                                              35, // derivative gain (kD)
                                               3, // anti windup
                                               1, // small error range, in degrees
                                               100, // small error range timeout, in milliseconds
-                                              3, // large error range, in degrees
+                                              4, // large error range, in degrees
                                               500, // large error range timeout, in milliseconds
                                               0 // maximum acceleration (slew)
 );
@@ -147,18 +147,22 @@ void autonomous() {
     chassis.setPose(-62.897,-15.027,90);
 
     //PID tuning, comment out when not using
-    //Lateral PID tuning
+    // Lateral PID tuning
     // chassis.setPose(0,0,0);
     // chassis.moveToPoint(0,24, 10000);
+
+    // Angular PID tuning
+    // chassis.setPose(0,0,0);
+    // chassis.turnToHeading(90, 2000);
 
     //Pure Pursuit
     chassis.follow(PBAutons1_txt, 15, 20000);  
     chassis.follow(PBAutons2_txt, 15, 20000,false);
-    chassis.follow(PBAutons3_txt, 15, 20000);
-    chassis.follow(PBAutons4_txt, 15, 20000,false);
-    chassis.follow(PBAutons5_txt, 15, 20000);
-    chassis.follow(PBAutons6_txt, 15, 20000,false);
-    chassis.follow(PBAutons7_txt, 15, 20000);
+    // chassis.follow(PBAutons3_txt, 15, 20000);
+    // chassis.follow(PBAutons4_txt, 15, 20000,false);
+    // chassis.follow(PBAutons5_txt, 15, 20000);
+    // chassis.follow(PBAutons6_txt, 15, 20000,false);
+    // chassis.follow(PBAutons7_txt, 15, 20000);
 }
  
 /**
