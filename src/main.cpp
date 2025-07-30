@@ -158,11 +158,11 @@ void autonomous() {
     //Pure Pursuit
     chassis.follow(PBAutons1_txt, 15, 20000);  
     chassis.follow(PBAutons2_txt, 15, 20000,false);
-    // chassis.follow(PBAutons3_txt, 15, 20000);
-    // chassis.follow(PBAutons4_txt, 15, 20000,false);
-    // chassis.follow(PBAutons5_txt, 15, 20000);
-    // chassis.follow(PBAutons6_txt, 15, 20000,false);
-    // chassis.follow(PBAutons7_txt, 15, 20000);
+    chassis.follow(PBAutons3_txt, 15, 20000);
+    chassis.follow(PBAutons4_txt, 15, 20000,false);
+    chassis.follow(PBAutons5_txt, 15, 20000);
+    chassis.follow(PBAutons6_txt, 15, 20000,false);
+    chassis.follow(PBAutons7_txt, 15, 20000);
 }
  
 /**
