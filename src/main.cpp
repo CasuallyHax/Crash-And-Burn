@@ -93,14 +93,16 @@ void initialize() {
     pros::lcd::initialize(); // initialize brain screen
     chassis.calibrate();
 
-    pros::Task screen_task([&]() {
+     pros::Task screenTask([&]() {
         while (true) {
             // print robot location to the brain screen
             pros::lcd::print(0, "X: %f", chassis.getPose().x); // x
             pros::lcd::print(1, "Y: %f", chassis.getPose().y); // y
             pros::lcd::print(2, "Theta: %f", chassis.getPose().theta); // heading
+            // log position telemetry
+            lemlib::telemetrySink()->info("Chassis pose: {}", chassis.getPose());
             // delay to save resources
-            pros::delay(20);
+            pros::delay(50);
         }
     });
 }
@@ -143,6 +145,81 @@ void autonomous() {
 
     //Angular PID tuning
 //    chassis.follow(PushBackAutons1, 15, 20000);
+
+
+
+//Skills Option A
+//go to closest loader
+// chassis.moveToPose(0,0,0,4000);
+// //back out of it
+// chassis.moveToPose(0,0,0,4000, {.forwards = false});
+// //grab two reds
+// chassis.moveToPose(0,0,90,4000);
+// //go to other two reds
+// chassis.moveToPose(0,0,0,4000);
+// //grab them
+// chassis.moveToPose(0,0,0,4000);
+// //score blocks in middle zone
+// chassis.moveToPose(0,0,0,4000);
+// //back up
+// chassis.moveToPose(0,0,0,4000, {.forwards = false});
+// //go to parking area to grab 6 blocks from there
+// chassis.moveToPose(0,0,0,4000);
+// //go to loader zone and only grab three blocks, mess with a wait to consistently only grab three
+// chassis.moveToPose(0,0,0,4000);
+// //back up
+// chassis.moveToPose(0,0,0,4000, {.forwards = false});
+// //score in long goal
+// chassis.moveToPose(0,0,0,4000);
+// //back up
+// chassis.moveToPose(0,0,0,4000, {.forwards = false});
+// //grab the other three blues from loading zone
+// chassis.moveToPose(0,0,0,4000);
+// //position robot to grab two blues
+// chassis.moveToPose(0,0,0,4000);
+// //grab other two blues
+// chassis.moveToPose(0,0,0,4000);
+// chassis.moveToPose(0,0,0,4000);
+// //score them
+// chassis.moveToPose(0,0,0,4000);
+// chassis.moveToPose(0,0,0,4000);
+// //back up
+// chassis.moveToPose(0,0,0,4000, {.forwards = false});
+// //park
+// chassis.moveToPose(0,0,0,4000);
+
+
+
+//Skills Option B
+//grab from bottom loader
+// chassis.moveToPose(0,0,0,4000);
+// //back up
+// chassis.moveToPose(0,0,0,4000, {.forwards = false});
+// //grab two reds (bottom left)
+// chassis.moveToPose(0,0,0,4000);
+// //grab other two reds (bottom right)
+// chassis.moveToPose(0,0,0,4000);
+// chassis.moveToPose(0,0,0,4000);
+// //grab other two reds and score (top right)
+// chassis.moveToPose(0,0,0,4000);
+// chassis.moveToPose(0,0,0,4000);
+// //back up
+// chassis.moveToPose(0,0,0,4000, {.forwards = false});
+// //go to loader
+// chassis.moveToPose(0,0,0,4000);
+// //back up
+// chassis.moveToPose(0,0,0,4000, {.forwards = false});
+// //grab other two reds (top left)
+// chassis.moveToPose(0,0,0,4000);
+// //score (top left)
+// chassis.moveToPose(0,0,0,4000);
+// //unload loader (top left)
+// chassis.moveToPose(0,0,0,4000);
+// //back up
+// chassis.moveToPose(0, 0, 0, 4000, {.forwards = false});
+// //park
+// chassis.moveToPose(0,0,0,4000);
+
 
 }
 
