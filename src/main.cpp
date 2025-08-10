@@ -214,44 +214,44 @@ void autonomous() {
 
 
     //Skills Option B
-    //grab from bottom loader
-    IntakeFromLoader();
-    chassis.moveToPose(0,0,0,4000);
-    //back up
-    chassis.moveToPose(0,0,0,4000, {.forwards = false});
-    LoaderFork.retract();
-    IntakeToBucket();
-    //grab two reds (bottom left)
-    chassis.moveToPose(0,0,0,4000);
-    //grab other two reds (bottom right)
-    chassis.moveToPose(0,0,0,4000);
-    chassis.moveToPose(0,0,0,4000);
-    //grab other two reds and score in bottom (top right)
-    chassis.moveToPose(0,0,0,4000);
-    chassis.moveToPose(0,0,0,4000);
-    BottomScoring();
-    //back up
-    chassis.moveToPose(0,0,0,4000, {.forwards = false});
-    //go to loader
-    IntakeFromLoader();
-    chassis.moveToPose(0,0,0,4000);
-    //back up
-    chassis.moveToPose(0,0,0,4000, {.forwards = false});
-    //grab other two reds (top left)
-    chassis.moveToPose(0,0,0,4000);
-    //score in middle (top left)
-    Aligner.retract();
-    LoaderFork.extend();
-    chassis.moveToPose(0,0,0,4000);
-    MiddleScoring();
-    //unload loader (top left)
-    IntakeFromLoader();
-    chassis.moveToPose(0,0,0,4000);
-    //back up
-    chassis.moveToPose(0, 0, 0, 4000, {.forwards = false});
-    LoaderFork.retract();
-    //park
-    chassis.moveToPose(0,0,0,4000);
+    // //grab from bottom loader
+    // IntakeFromLoader();
+    // chassis.moveToPose(0,0,0,4000);
+    // //back up
+    // chassis.moveToPose(0,0,0,4000, {.forwards = false});
+    // LoaderFork.retract();
+    // IntakeToBucket();
+    // //grab two reds (bottom left)
+    // chassis.moveToPose(0,0,0,4000);
+    // //grab other two reds (bottom right)
+    // chassis.moveToPose(0,0,0,4000);
+    // chassis.moveToPose(0,0,0,4000);
+    // //grab other two reds and score in bottom (top right)
+    // chassis.moveToPose(0,0,0,4000);
+    // chassis.moveToPose(0,0,0,4000);
+    // BottomScoring();
+    // //back up
+    // chassis.moveToPose(0,0,0,4000, {.forwards = false});
+    // //go to loader
+    // IntakeFromLoader();
+    // chassis.moveToPose(0,0,0,4000);
+    // //back up
+    // chassis.moveToPose(0,0,0,4000, {.forwards = false});
+    // //grab other two reds (top left)
+    // chassis.moveToPose(0,0,0,4000);
+    // //score in middle (top left)
+    // Aligner.retract();
+    // LoaderFork.extend();
+    // chassis.moveToPose(0,0,0,4000);
+    // MiddleScoring();
+    // //unload loader (top left)
+    // IntakeFromLoader();
+    // chassis.moveToPose(0,0,0,4000);
+    // //back up
+    // chassis.moveToPose(0, 0, 0, 4000, {.forwards = false});
+    // LoaderFork.retract();
+    // //park
+    // chassis.moveToPose(0,0,0,4000);
 
 
 }
