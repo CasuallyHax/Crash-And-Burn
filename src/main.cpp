@@ -1,10 +1,15 @@
 #include "main.h"
 #include "lemlib/api.hpp" // IWYU pragma: keep
 #include "lemlib/chassis/chassis.hpp"
+#include "pros/motors.hpp" // IWYU pragma: keep
+#include "helpers.hpp"
+#include "globals.hpp" // IWYU pragma: keep
 //ASSET(PushBackAutons1);
 
 pros::MotorGroup left_motors({-11}, pros::MotorGearset::green); // left motors on ports 1, 2, 3
 pros::MotorGroup right_motors({1}, pros::MotorGearset::green); // right motors on ports 4, 5, 6
+
+//creating intake motor group
 
 // create a v5 rotation sensor on port 1
 pros::Rotation vertical_tracker(20);
@@ -15,7 +20,7 @@ pros::Rotation horizontal_tracker(10);
 // drivetrain settings
 lemlib::Drivetrain drivetrain(&left_motors, // left motor group
                               &right_motors, // right motor group
-                              9.75, // 10 inch track width
+                              9.5, // 10 inch track width
                               lemlib::Omniwheel::NEW_325, // using new 4" omnis
                               200, // drivetrain rpm is 360
                               2 // horizontal drift is 2 (for now)
@@ -137,88 +142,116 @@ void competition_initialize() {}
  * from where it left off.
  */
 void autonomous() {
+    //IMPORTANT
+    //NEED TO CHANGE STARTING POS
     chassis.setPose(0,0,0);
 
     //PID tuning, comment out when not using
     //Lateral PID tuning
-//    chassis.moveToPoint(0,24, 10000);
+    //    chassis.moveToPoint(0,24, 10000);
 
     //Angular PID tuning
-//    chassis.follow(PushBackAutons1, 15, 20000);
+    //    chassis.follow(PushBackAutons1, 15, 20000);
 
 
 
-//Skills Option A
-//go to closest loader
-// chassis.moveToPose(0,0,0,4000);
-// //back out of it
-// chassis.moveToPose(0,0,0,4000, {.forwards = false});
-// //grab two reds
-// chassis.moveToPose(0,0,90,4000);
-// //go to other two reds
-// chassis.moveToPose(0,0,0,4000);
-// //grab them
-// chassis.moveToPose(0,0,0,4000);
-// //score blocks in middle zone
-// chassis.moveToPose(0,0,0,4000);
-// //back up
-// chassis.moveToPose(0,0,0,4000, {.forwards = false});
-// //go to parking area to grab 6 blocks from there
-// chassis.moveToPose(0,0,0,4000);
-// //go to loader zone and only grab three blocks, mess with a wait to consistently only grab three
-// chassis.moveToPose(0,0,0,4000);
-// //back up
-// chassis.moveToPose(0,0,0,4000, {.forwards = false});
-// //score in long goal
-// chassis.moveToPose(0,0,0,4000);
-// //back up
-// chassis.moveToPose(0,0,0,4000, {.forwards = false});
-// //grab the other three blues from loading zone
-// chassis.moveToPose(0,0,0,4000);
-// //position robot to grab two blues
-// chassis.moveToPose(0,0,0,4000);
-// //grab other two blues
-// chassis.moveToPose(0,0,0,4000);
-// chassis.moveToPose(0,0,0,4000);
-// //score them
-// chassis.moveToPose(0,0,0,4000);
-// chassis.moveToPose(0,0,0,4000);
-// //back up
-// chassis.moveToPose(0,0,0,4000, {.forwards = false});
-// //park
-// chassis.moveToPose(0,0,0,4000);
+    //Skills Option A
+    // //go to closest loader
+    // IntakeFromLoader();
+    // chassis.moveToPose(0,0,0,4000);
+    // //back out of it
+    // chassis.moveToPose(0,0,0,4000, {.forwards = false});
+    // //grab two reds
+    // IntakeToBucket();
+    // chassis.moveToPose(0,0,90,4000);
+    // //go to other two reds
+    // chassis.moveToPose(0,0,0,4000);
+    // //grab them
+    // chassis.moveToPose(0,0,0,4000);
+    // //score blocks in middle zone
+    // Aligner.retract();
+    // LoaderFork.extend();
+    // chassis.moveToPose(0,0,0,4000);
+    // MiddleScoring();
+    // //back up
+    // chassis.moveToPose(0,0,0,4000, {.forwards = false});
+    // Aligner.extend();
+    // LoaderFork.retract();
+    // //go to parking area to grab 6 blocks from there
+    // chassis.moveToPose(0,0,0,4000);
+    // //Move out of parking to release fork
+    // chassis.moveToPose(0,0,0,4000);
+    // IntakeFromLoader();
+    // //go to loader zone and only grab three blocks, mess with a delay to consistently only grab three
+    // chassis.moveToPose(0,0,0,4000);
+    // //back up
+    // chassis.moveToPose(0,0,0,4000, {.forwards = false});
+    // //score in long goal
+    // Aligner.extend();
+    // LoaderFork.retract();
+    // chassis.moveToPose(0,0,0,4000);
+    // TopScoring();
+    // //back up
+    // chassis.moveToPose(0,0,0,4000, {.forwards = false});
+    // IntakeFromLoader();
+    // //grab the other three blues from loading zone
+    // chassis.moveToPose(0,0,0,4000);
+    // IntakeToBucket();
+    // //position robot to grab two blues
+    // chassis.moveToPose(0,0,0,4000);
+    // //grab other two blues
+    // chassis.moveToPose(0,0,0,4000);
+    // chassis.moveToPose(0,0,0,4000);
+    // //score them in bottom goal
+    // chassis.moveToPose(0,0,0,4000);
+    // chassis.moveToPose(0,0,0,4000);
+    // BottomScoring();
+    // //back up
+    // chassis.moveToPose(0,0,0,4000, {.forwards = false});
+    // //park
+    // chassis.moveToPose(0,0,0,4000);
 
 
 
-//Skills Option B
-//grab from bottom loader
-// chassis.moveToPose(0,0,0,4000);
-// //back up
-// chassis.moveToPose(0,0,0,4000, {.forwards = false});
-// //grab two reds (bottom left)
-// chassis.moveToPose(0,0,0,4000);
-// //grab other two reds (bottom right)
-// chassis.moveToPose(0,0,0,4000);
-// chassis.moveToPose(0,0,0,4000);
-// //grab other two reds and score (top right)
-// chassis.moveToPose(0,0,0,4000);
-// chassis.moveToPose(0,0,0,4000);
-// //back up
-// chassis.moveToPose(0,0,0,4000, {.forwards = false});
-// //go to loader
-// chassis.moveToPose(0,0,0,4000);
-// //back up
-// chassis.moveToPose(0,0,0,4000, {.forwards = false});
-// //grab other two reds (top left)
-// chassis.moveToPose(0,0,0,4000);
-// //score (top left)
-// chassis.moveToPose(0,0,0,4000);
-// //unload loader (top left)
-// chassis.moveToPose(0,0,0,4000);
-// //back up
-// chassis.moveToPose(0, 0, 0, 4000, {.forwards = false});
-// //park
-// chassis.moveToPose(0,0,0,4000);
+    //Skills Option B
+    //grab from bottom loader
+    IntakeFromLoader();
+    chassis.moveToPose(0,0,0,4000);
+    //back up
+    chassis.moveToPose(0,0,0,4000, {.forwards = false});
+    LoaderFork.retract();
+    IntakeToBucket();
+    //grab two reds (bottom left)
+    chassis.moveToPose(0,0,0,4000);
+    //grab other two reds (bottom right)
+    chassis.moveToPose(0,0,0,4000);
+    chassis.moveToPose(0,0,0,4000);
+    //grab other two reds and score in bottom (top right)
+    chassis.moveToPose(0,0,0,4000);
+    chassis.moveToPose(0,0,0,4000);
+    BottomScoring();
+    //back up
+    chassis.moveToPose(0,0,0,4000, {.forwards = false});
+    //go to loader
+    IntakeFromLoader();
+    chassis.moveToPose(0,0,0,4000);
+    //back up
+    chassis.moveToPose(0,0,0,4000, {.forwards = false});
+    //grab other two reds (top left)
+    chassis.moveToPose(0,0,0,4000);
+    //score in middle (top left)
+    Aligner.retract();
+    LoaderFork.extend();
+    chassis.moveToPose(0,0,0,4000);
+    MiddleScoring();
+    //unload loader (top left)
+    IntakeFromLoader();
+    chassis.moveToPose(0,0,0,4000);
+    //back up
+    chassis.moveToPose(0, 0, 0, 4000, {.forwards = false});
+    LoaderFork.retract();
+    //park
+    chassis.moveToPose(0,0,0,4000);
 
 
 }
