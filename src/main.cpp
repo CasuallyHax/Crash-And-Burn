@@ -4,7 +4,10 @@
 #include "pros/motors.hpp" // IWYU pragma: keep
 #include "helpers.hpp"
 #include "globals.hpp" // IWYU pragma: keep
+#include "colorSorting.hpp"
 //ASSET(PushBackAutons1);
+
+
 
 pros::MotorGroup left_motors({-11}, pros::MotorGearset::green); // left motors on ports 1, 2, 3
 pros::MotorGroup right_motors({1}, pros::MotorGearset::green); // right motors on ports 4, 5, 6
@@ -93,21 +96,26 @@ lemlib::Chassis chassis(drivetrain, // drivetrain settings
                         sensors // odometry sensors
 );
 
+
 // this runs at the start of the program
 void initialize() {
     pros::lcd::initialize(); // initialize brain screen
     chassis.calibrate();
 
+    void InitializeMotors();
+
      pros::Task screenTask([&]() {
         while (true) {
-            // print robot location to the brain screen
-            pros::lcd::print(0, "X: %f", chassis.getPose().x); // x
-            pros::lcd::print(1, "Y: %f", chassis.getPose().y); // y
-            pros::lcd::print(2, "Theta: %f", chassis.getPose().theta); // heading
-            // log position telemetry
-            lemlib::telemetrySink()->info("Chassis pose: {}", chassis.getPose());
-            // delay to save resources
-            pros::delay(50);
+            // // print robot location to the brain screen
+            // pros::lcd::print(0, "X: %f", chassis.getPose().x); // x
+            // pros::lcd::print(1, "Y: %f", chassis.getPose().y); // y
+            // pros::lcd::print(2, "Theta: %f", chassis.getPose().theta); // heading
+            // // log position telemetry
+            // lemlib::telemetrySink()->info("Chassis pose: {}", chassis.getPose());
+            // // delay to save resources
+
+    
+//            pros::delay(50);
         }
     });
 }
@@ -141,6 +149,8 @@ void competition_initialize() {}
  * will be stopped. Re-enabling the robot will restart the task, not re-start it
  * from where it left off.
  */
+
+ 
 void autonomous() {
     //IMPORTANT
     //NEED TO CHANGE STARTING POS
@@ -157,12 +167,11 @@ void autonomous() {
 
     //Skills Option A
     // //go to closest loader
-    // IntakeFromLoader();
+    // colorSorting();
+    // LoaderFork.extend();
     // chassis.moveToPose(0,0,0,4000);
     // //back out of it
-    // chassis.moveToPose(0,0,0,4000, {.forwards = false});
-    // //grab two reds
-    // IntakeToBucket();
+    // chassis.moveToPose(0,0,0,4000, {.forwards = false}); 
     // chassis.moveToPose(0,0,90,4000);
     // //go to other two reds
     // chassis.moveToPose(0,0,0,4000);
@@ -177,11 +186,13 @@ void autonomous() {
     // chassis.moveToPose(0,0,0,4000, {.forwards = false});
     // Aligner.extend();
     // LoaderFork.retract();
+    // colorSorting();
     // //go to parking area to grab 6 blocks from there
     // chassis.moveToPose(0,0,0,4000);
     // //Move out of parking to release fork
     // chassis.moveToPose(0,0,0,4000);
-    // IntakeFromLoader();
+    // LoaderFork.extend();
+    // chassis.moveToPose(0,0,0,4000);
     // //go to loader zone and only grab three blocks, mess with a delay to consistently only grab three
     // chassis.moveToPose(0,0,0,4000);
     // //back up
@@ -193,10 +204,12 @@ void autonomous() {
     // TopScoring();
     // //back up
     // chassis.moveToPose(0,0,0,4000, {.forwards = false});
-    // IntakeFromLoader();
+    // Color TeamColor = Color::BLUE;
+    // LoaderFork.extend();
+    // colorSorting();
     // //grab the other three blues from loading zone
     // chassis.moveToPose(0,0,0,4000);
-    // IntakeToBucket();
+    // LoaderFork.retract();
     // //position robot to grab two blues
     // chassis.moveToPose(0,0,0,4000);
     // //grab other two blues
@@ -213,14 +226,14 @@ void autonomous() {
 
 
 
-    //Skills Option B
+    // //Skills Option B
     // //grab from bottom loader
-    // IntakeFromLoader();
+    // LoaderFork.extend();
+    // colorSorting();
     // chassis.moveToPose(0,0,0,4000);
     // //back up
     // chassis.moveToPose(0,0,0,4000, {.forwards = false});
     // LoaderFork.retract();
-    // IntakeToBucket();
     // //grab two reds (bottom left)
     // chassis.moveToPose(0,0,0,4000);
     // //grab other two reds (bottom right)
@@ -233,7 +246,8 @@ void autonomous() {
     // //back up
     // chassis.moveToPose(0,0,0,4000, {.forwards = false});
     // //go to loader
-    // IntakeFromLoader();
+    // LoaderFork.extend();
+    // colorSorting();
     // chassis.moveToPose(0,0,0,4000);
     // //back up
     // chassis.moveToPose(0,0,0,4000, {.forwards = false});
@@ -245,7 +259,8 @@ void autonomous() {
     // chassis.moveToPose(0,0,0,4000);
     // MiddleScoring();
     // //unload loader (top left)
-    // IntakeFromLoader();
+    // LoaderFork.extend();
+    // IntakeToBucket();
     // chassis.moveToPose(0,0,0,4000);
     // //back up
     // chassis.moveToPose(0, 0, 0, 4000, {.forwards = false});
@@ -281,7 +296,12 @@ void opcontrol() {
         // move the robot
         chassis.arcade(leftY, rightX);
 
-        // delay to save resources
-        pros::delay(25);
+        Color detected = classify_block(); // check current block
+        
+        if(controller.get_digital(DIGITAL_L1)){
+            colorSorting();
+        }
+
+        pros::delay(20); // small delay for loop timing
     }
 }

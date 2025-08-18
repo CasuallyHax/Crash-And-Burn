@@ -3,7 +3,6 @@
 
 //Preset spin directions
 void IntakeToBucket();
-void IntakeFromLoader();
 void TopScoring();
 void MiddleScoring();
 void BottomScoring();

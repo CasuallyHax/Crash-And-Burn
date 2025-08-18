@@ -10,14 +10,6 @@ void IntakeToBucket(){
     Bucket_55W.move(-127);
 }
 
-void IntakeFromLoader(){
-    LoaderFork.extend();
-    Intake_Bottom_11W.move(127);
-    Intake_Middle_55W.move(127);
-    Intake_Top_11W.move(-127);
-    Bucket_55W.move(-127);
-}
-
 void TopScoring(){
     Intake_Bottom_11W.move(127);
     Intake_Middle_55W.move(-127);
@@ -40,3 +32,4 @@ void BottomScoring(){
     Intake_Top_11W.move(-127);
     Bucket_55W.move(-127);
 }
+

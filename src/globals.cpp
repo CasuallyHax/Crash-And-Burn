@@ -1,6 +1,8 @@
 #include "globals.hpp"
 #include "pros/motors.hpp"
 
+std::string SpinningType = "";
+
 //Intake motors
 pros::Motor Intake_Bottom_11W(-2,pros::v5::MotorGears::blue);
 pros::Motor Intake_Middle_55W(3,pros::v5::MotorGears::green);
@@ -16,3 +18,10 @@ Bucket_55W.set_voltage_limit(7200);
 //pneumatics
 pros::adi::Pneumatics LoaderFork('A', false);
 pros::adi::Pneumatics Aligner('B', true);
+
+//optical
+pros::Optical ColorSorter(10);
+
+// define the global variable
+Color TeamColor = Color::RED; // default team
+

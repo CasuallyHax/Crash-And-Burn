@@ -14,3 +14,12 @@ void InitializeMotors();
 //pneumatics
 extern pros::adi::Pneumatics LoaderFork;
 extern pros::adi::Pneumatics Aligner;
+
+//optical
+extern pros::Optical ColorSorter;
+
+// forward declare the enum
+enum class Color { RED, BLUE, UNKNOWN };
+
+// declare the global variable
+extern Color TeamColor;
