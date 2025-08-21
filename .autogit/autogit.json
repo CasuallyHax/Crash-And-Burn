@@ -3,7 +3,7 @@
   "updateInterval": 1800,
   "logging": true,
   "silent": true,
-  "commitMessage": "--- Auto Git Commit ---",
+  "commitMessage": "{ts.utc}",
   "locale": "en-US",
-  "timeZone": "Europe/Berlin"
+  "timeZone": "Eurpoe/Berlin"
 }
