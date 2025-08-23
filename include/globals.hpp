@@ -5,9 +5,9 @@
 
 //Intake motors
 extern pros::Motor Intake_Bottom_11W;
-extern pros::Motor* Intake_Middle_55W;
+extern pros::Motor Intake_Middle_55W;
 extern pros::Motor Intake_Top_11W;
-extern pros::Motor* Bucket_55W;
+extern pros::Motor Bucket_55W;
 
 void InitializeMotors();
 

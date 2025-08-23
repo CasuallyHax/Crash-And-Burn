@@ -35,9 +35,10 @@ Color classify_block() {
     return Color::UNKNOWN;
 }
 
-Color detected = classify_block(); // check current block
+
 
 void colorSorting(){
+    Color detected = classify_block(); // check current block
     while(true){
         if (detected == TeamColor) {
             IntakeToBucket(); // handle friendly block
