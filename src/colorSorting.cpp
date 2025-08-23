@@ -38,11 +38,16 @@ Color classify_block() {
 Color detected = classify_block(); // check current block
 
 void colorSorting(){
-    if (detected == TeamColor) {
-           TopScoring(); // handle friendly block
-        } else if (detected != Color::UNKNOWN) {
-            IntakeToBucket(); // handle enemy block
-        } else {
-            IntakeToBucket(); // no block detected
-        }
+    while(true){
+        if (detected == TeamColor) {
+            IntakeToBucket(); // handle friendly block
+            } else if (detected != Color::UNKNOWN) {
+                TopScoring(); // handle enemy block
+                pros::delay(2500);
+            } else {
+                IntakeToBucket(); // no block detected
+            }
+
+        pros::delay(25);
+    }
 }
