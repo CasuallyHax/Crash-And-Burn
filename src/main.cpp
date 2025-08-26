@@ -7,12 +7,6 @@
 #include "colorSorting.hpp"
 //ASSET(PushBackAutons1);
 
-
-pros::Motor DriveTrain55WL(13,pros::v5::MotorGears::green);
-pros::Motor DriveTrain55WR(18,pros::v5::MotorGears::green);
-
-
-
 pros::MotorGroup left_motors({11,12,13}, pros::MotorGearset::green); // left motors on ports 1, 2, 3
 pros::MotorGroup right_motors({15,19,18}, pros::MotorGearset::green); // right motors on ports 4, 5, 6
 
@@ -105,9 +99,6 @@ lemlib::Chassis chassis(drivetrain, // drivetrain settings
 void initialize() {
     pros::lcd::initialize(); // initialize brain screen
     chassis.calibrate();
-      
-    DriveTrain55WL.set_voltage_limit(7200);
-    DriveTrain55WR.set_voltage_limit(7200);
 
     void InitializeMotors();
 
@@ -309,6 +300,6 @@ void opcontrol() {
             colorSorting();
         }
 
-        pros::delay(50);// small delay for loop timing
+        pros::delay(20);// small delay for loop timing
     }
 }
