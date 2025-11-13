@@ -8,18 +8,18 @@ extern pros::Motor Intake_Bottom_11W;
 extern pros::Motor Intake_Middle_55W;
 extern pros::Motor Intake_Top_11W;
 extern pros::Motor Bucket_55W;
+extern pros::Motor Intake_Top_Front_55W;
+extern pros::Motor Agitator_55W;
+extern pros::Motor Intake_Top_Back_55W;
 
 void InitializeMotors();
 
 //pneumatics
+extern pros::adi::Pneumatics Hood;
 extern pros::adi::Pneumatics LoaderFork;
-extern pros::adi::Pneumatics Aligner;
 
 //optical
-extern pros::Optical ColorSorter;
+extern pros::Optical colorSorter;
 
-// forward declare the enum
-enum class Color { RED, BLUE, UNKNOWN };
-
-// declare the global variable
-extern Color TeamColor;
+//controller
+extern pros::Controller controller;

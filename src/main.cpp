@@ -7,8 +7,8 @@
 #include "colorSorting.hpp"
 //ASSET(PushBackAutons1);
 
-pros::MotorGroup left_motors({11,12,13}, pros::MotorGearset::green); // left motors on ports 1, 2, 3
-pros::MotorGroup right_motors({15,19,18}, pros::MotorGearset::green); // right motors on ports 4, 5, 6
+pros::MotorGroup left_motors({-13,-14}, pros::MotorGearset::green); // left motors on ports 1, 2, 3
+pros::MotorGroup right_motors({19,17}, pros::MotorGearset::green); // right motors on ports 4, 5, 6
 
 //creating intake motor group
 
@@ -100,6 +100,8 @@ void initialize() {
     pros::lcd::initialize(); // initialize brain screen
     chassis.calibrate();
 
+    colorSorter.set_led_pwm(0);
+
     void InitializeMotors();
 
      pros::Task screenTask([&]() {
@@ -152,8 +154,9 @@ void competition_initialize() {}
 void autonomous() {
     //IMPORTANT
     //NEED TO CHANGE STARTING POS
-    chassis.setPose(0,0,0);
+    chassis.setPose(-58,-13,180);
 
+    chassis.moveToPoint(-58,-20,2000);
     //PID tuning, comment out when not using
     //Lateral PID tuning
     //    chassis.moveToPoint(0,24, 10000);
@@ -166,7 +169,7 @@ void autonomous() {
     //Skills Option A
     // //go to closest loader
     // colorSorting();
-    // LoaderFork.extend();
+    // Hood.extend();
     // chassis.moveToPose(0,0,0,4000);
     // //back out of it
     // chassis.moveToPose(0,0,0,4000, {.forwards = false}); 
@@ -177,19 +180,19 @@ void autonomous() {
     // chassis.moveToPose(0,0,0,4000);
     // //score blocks in middle zone
     // Aligner.retract();
-    // LoaderFork.extend();
+    // Hood.extend();
     // chassis.moveToPose(0,0,0,4000);
     // MiddleScoring();
     // //back up
     // chassis.moveToPose(0,0,0,4000, {.forwards = false});
     // Aligner.extend();
-    // LoaderFork.retract();
+    // Hood.retract();
     // colorSorting();
     // //go to parking area to grab 6 blocks from there
     // chassis.moveToPose(0,0,0,4000);
     // //Move out of parking to release fork
     // chassis.moveToPose(0,0,0,4000);
-    // LoaderFork.extend();
+    // Hood.extend();
     // chassis.moveToPose(0,0,0,4000);
     // //go to loader zone and only grab three blocks, mess with a delay to consistently only grab three
     // chassis.moveToPose(0,0,0,4000);
@@ -197,17 +200,17 @@ void autonomous() {
     // chassis.moveToPose(0,0,0,4000, {.forwards = false});
     // //score in long goal
     // Aligner.extend();
-    // LoaderFork.retract();
+    // Hood.retract();
     // chassis.moveToPose(0,0,0,4000);
     // TopScoring();
     // //back up
     // chassis.moveToPose(0,0,0,4000, {.forwards = false});
     // Color TeamColor = Color::BLUE;
-    // LoaderFork.extend();
+    // Hood.extend();
     // colorSorting();
     // //grab the other three blues from loading zone
     // chassis.moveToPose(0,0,0,4000);
-    // LoaderFork.retract();
+    // Hood.retract();
     // //position robot to grab two blues
     // chassis.moveToPose(0,0,0,4000);
     // //grab other two blues
@@ -226,12 +229,12 @@ void autonomous() {
 
     // //Skills Option B
     // //grab from bottom loader
-    // LoaderFork.extend();
+    // Hood.extend();
     // colorSorting();
     // chassis.moveToPose(0,0,0,4000);
     // //back up
     // chassis.moveToPose(0,0,0,4000, {.forwards = false});
-    // LoaderFork.retract();
+    // Hood.retract();
     // //grab two reds (bottom left)
     // chassis.moveToPose(0,0,0,4000);
     // //grab other two reds (bottom right)
@@ -244,7 +247,7 @@ void autonomous() {
     // //back up
     // chassis.moveToPose(0,0,0,4000, {.forwards = false});
     // //go to loader
-    // LoaderFork.extend();
+    // Hood.extend();
     // colorSorting();
     // chassis.moveToPose(0,0,0,4000);
     // //back up
@@ -253,20 +256,48 @@ void autonomous() {
     // chassis.moveToPose(0,0,0,4000);
     // //score in middle (top left)
     // Aligner.retract();
-    // LoaderFork.extend();
+    // Hood.extend();
     // chassis.moveToPose(0,0,0,4000);
     // MiddleScoring();
     // //unload loader (top left)
-    // LoaderFork.extend();
+    // Hood.extend();
     // IntakeToBucket();
     // chassis.moveToPose(0,0,0,4000);
     // //back up
     // chassis.moveToPose(0, 0, 0, 4000, {.forwards = false});
-    // LoaderFork.retract();
+    // Hood.retract();
     // //park
-    // chassis.moveToPose(0,0,0,4000);
+    // chassis.moveToPose(0,0,0,4000)
 
-
+//Match Autons
+//Score Preload in middle 
+chassis.moveToPose(0,0,0,4000);
+MiddleScoring();
+chassis.moveToPose(0,0,0,4000);
+pros::delay(400);
+IntakeToBucket();
+//back out
+chassis.moveToPose(0,0,0,4000, {.forwards = false});
+//pick up blocks
+chassis.moveToPose(0,0,0,4000);
+chassis.moveToPose(0,0,0,4000);
+chassis.moveToPose(0,0,0,4000);
+//score in bottom
+chassis.moveToPose(0,0,0,4000);
+BottomScoring();
+pros::delay(600);
+//back out
+chassis.moveToPose(0,0,0,4000, {.forwards = false});
+//go to loader
+chassis.moveToPose(0,0,0,4000);
+LoaderFork.extend();
+chassis.moveToPose(0,0,0,4000);
+//back out
+chassis.moveToPose(0,0,0,4000, {false});
+//score in top goal
+chassis.moveToPose(0,0,0,4000);
+TopScoring();
+chassis.moveToPose(0,0,0,4000);
 }
 
 /**
@@ -282,7 +313,8 @@ void autonomous() {
  * operator control task will be stopped. Re-enabling the robot will restart the
  * task, not resume it from where it left off.
  */
-pros::Controller controller(pros::E_CONTROLLER_MASTER);
+
+
 
 void opcontrol() {
     // loop forever
@@ -293,13 +325,8 @@ void opcontrol() {
 
         // move the robot
         chassis.arcade(leftY, rightX);
-
-        Color detected = classify_block(); // check current block
         
-        if(controller.get_digital(DIGITAL_L1)){
-            colorSorting();
-        }
-
-        pros::delay(20);// small delay for loop timing
+        controllerCode();
+        pros::delay(10);// small delay for loop timing
     }
 }

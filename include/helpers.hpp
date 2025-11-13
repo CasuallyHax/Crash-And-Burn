@@ -7,3 +7,8 @@ void TopScoring();
 void MiddleScoring();
 void BottomScoring();
 
+void colorSorting(std::string goodColor);
+
+void controllerCode();
+
+void pneumaticCode();
