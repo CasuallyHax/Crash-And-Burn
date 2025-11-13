@@ -326,6 +326,7 @@ void opcontrol() {
         // move the robot
         chassis.arcade(leftY, rightX);
 
+        controllerCode();
 
         pros::delay(20);// small delay for loop timing
     }
