@@ -22,7 +22,8 @@ void InitializeMotors(){
 
 //pneumatics
 pros::adi::Pneumatics Hood('A', false);
-pros::adi::Pneumatics LoaderFork('B', true);
+pros::adi::Pneumatics LoaderFork('B', false);
+
 
 //optical
 pros::Optical colorSorter(21);

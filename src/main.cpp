@@ -7,23 +7,23 @@
 #include "colorSorting.hpp"
 //ASSET(PushBackAutons1);
 
-pros::MotorGroup left_motors({-13,-14}, pros::MotorGearset::green); // left motors on ports 1, 2, 3
-pros::MotorGroup right_motors({19,17}, pros::MotorGearset::green); // right motors on ports 4, 5, 6
+pros::MotorGroup left_motors({-13,-14}, pros::MotorGearset::blue); // left motors on ports 1, 2, 3
+pros::MotorGroup right_motors({19,17}, pros::MotorGearset::blue); // right motors on ports 4, 5, 6
 
-//creating intake motor group
+// //creating intake motor group
 
-// create a v5 rotation sensor on port 1
-pros::Rotation vertical_tracker(20);
+// // create a v5 rotation sensor on port 1
+// pros::Rotation vertical_tracker(20);
 
-// create a v5 rotation sensor on port 1
-pros::Rotation horizontal_tracker(10);
+// // create a v5 rotation sensor on port 1
+// pros::Rotation horizontal_tracker(10);
 
 // drivetrain settings
 lemlib::Drivetrain drivetrain(&left_motors, // left motor group
                               &right_motors, // right motor group
-                              9.5, // 10 inch track width
+                              9, // 10 inch track width
                               lemlib::Omniwheel::NEW_325, // using new 4" omnis
-                              200, // drivetrain rpm is 360
+                              600, // drivetrain rpm is 360
                               2 // horizontal drift is 2 (for now)
 );
 
@@ -44,29 +44,23 @@ pros::Imu imu(3);
  * All other competition modes are blocked by initialize; it is recommended
  * to keep execution time for this mode under a few seconds.
  */
-// void initialize() {
-// 	pros::lcd::initialize();
-// 	pros::lcd::set_text(1, "Hello PROS User!");
-
-// 	pros::lcd::register_btn1_cb(on_center_button);
-// }
 
 // vertical tracking wheel
-lemlib::TrackingWheel vertical_tracking_wheel(&vertical_tracker, lemlib::Omniwheel::NEW_275, -1);
+// lemlib::TrackingWheel vertical_tracking_wheel(&vertical_tracker, lemlib::Omniwheel::NEW_275, -1);
 
-lemlib::TrackingWheel horizontal_tracking_wheel(&horizontal_tracker, lemlib::Omniwheel::NEW_275, -7.5);
+// lemlib::TrackingWheel horizontal_tracking_wheel(&horizontal_tracker, lemlib::Omniwheel::NEW_275, -7.5);
 
-lemlib::OdomSensors sensors(&vertical_tracking_wheel, // vertical tracking wheel 1, set to null
+lemlib::OdomSensors sensors(nullptr, // vertical tracking wheel 1, set to null
                             nullptr, // vertical tracking wheel 2, set to nullptr as we are using IMEs
-                            &horizontal_tracking_wheel, // horizontal tracking wheel 1
+                            nullptr, // horizontal tracking wheel 1
                             nullptr, // horizontal tracking wheel 2, set to nullptr as we don't have a second one
                             &imu // inertial sensor
 );
 
 // lateral PID controller
-lemlib::ControllerSettings lateral_controller(20, // proportional gain (kP)
+lemlib::ControllerSettings lateral_controller(6, // proportional gain (kP)
                                               0, // integral gain (kI)
-                                              40, // derivative gain (kD)
+                                              30, // derivative gain (kD)
                                               3, // anti windup
                                               1, // small error range, in inches
                                               100, // small error range timeout, in milliseconds
@@ -78,13 +72,13 @@ lemlib::ControllerSettings lateral_controller(20, // proportional gain (kP)
 // angular PID controller
 lemlib::ControllerSettings angular_controller(4, // proportional gain (kP)
                                               0, // integral gain (kI)
-                                              30, // derivative gain (kD)
-                                              0, // anti windup
-                                              0, // small error range, in degrees
-                                              0, // small error range timeout, in milliseconds
-                                              0, // large error range, in degrees
-                                              0, // large error range timeout, in milliseconds
-                                              0 // maximum acceleration (slew)
+                                              50, // derivative gain (kD)
+                                              3, // anti windup
+                                              1, // small error range, in inches
+                                              100, // small error range timeout, in milliseconds
+                                              3, // large error range, in inches
+                                              500, // large error range timeout, in milliseconds
+                                              20 // maximum acceleration (slew)
 );
 
 // create the chassis
@@ -152,17 +146,18 @@ void competition_initialize() {}
 
  
 void autonomous() {
+    left_motors.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+    right_motors.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
     //IMPORTANT
-    //NEED TO CHANGE STARTING POS
-    chassis.setPose(-58,-13,180);
+    chassis.setPose(61.8,-18,180);
 
-    chassis.moveToPoint(-58,-20,2000);
+    // chassis.moveToPoint(0,24,20000);
     //PID tuning, comment out when not using
     //Lateral PID tuning
     //    chassis.moveToPoint(0,24, 10000);
 
     //Angular PID tuning
-    //    chassis.follow(PushBackAutons1, 15, 20000);
+    //     chassis.turnToHeading(90,2000);
 
 
 
@@ -270,34 +265,52 @@ void autonomous() {
     // chassis.moveToPose(0,0,0,4000)
 
 //Match Autons
-//Score Preload in middle 
-chassis.moveToPose(0,0,0,4000);
+//Score Preload in middle
+chassis.moveToPose(40.7, -23, 270, 2500);
+IntakeToBucket();
+chassis.moveToPose(14.6,-22.7,0,4000);
+chassis.moveToPose(6,-15.5,315,3000);
+pros::delay(2000);
 MiddleScoring();
-chassis.moveToPose(0,0,0,4000);
+pros::delay(4000);
+IntakeToBucket();
+chassis.moveToPose(24, -24.8, 0, 3000, {.forwards = false});
+chassis.moveToPose(20, 26, 0, 3000);
+chassis.moveToPose(8.5, 3, -135, 3000);
+pros::delay(4000);
+BottomScoring();
+pros::delay(200);
+chassis.moveToPose(9.5, 4, -135, 3000, {.forwards = false});
+pros::delay(1000);
+chassis.moveToPose(43, 43, 90, 4000, {.forwards = false});
 pros::delay(400);
 IntakeToBucket();
-//back out
-chassis.moveToPose(0,0,0,4000, {.forwards = false});
-//pick up blocks
-chassis.moveToPose(0,0,0,4000);
-chassis.moveToPose(0,0,0,4000);
-chassis.moveToPose(0,0,0,4000);
-//score in bottom
-chassis.moveToPose(0,0,0,4000);
-BottomScoring();
-pros::delay(600);
-//back out
-chassis.moveToPose(0,0,0,4000, {.forwards = false});
-//go to loader
-chassis.moveToPose(0,0,0,4000);
 LoaderFork.extend();
-chassis.moveToPose(0,0,0,4000);
-//back out
-chassis.moveToPose(0,0,0,4000, {false});
-//score in top goal
-chassis.moveToPose(0,0,0,4000);
-TopScoring();
-chassis.moveToPose(0,0,0,4000);
+chassis.moveToPose(55, 43, 90, 3000);
+// // pros::delay(400);
+// IntakeToBucket();
+// //back out
+// chassis.moveToPose(0,0,0,4000, {.forwards = false});
+// //pick up blocks
+// chassis.moveToPose(0,0,0,4000);
+// chassis.moveToPose(0,0,0,4000);
+// chassis.moveToPose(0,0,0,4000);
+// //score in bottom
+// chassis.moveToPose(0,0,0,4000);
+// BottomScoring();
+// pros::delay(600);
+// //back out
+// chassis.moveToPose(0,0,0,4000, {.forwards = false});
+// //go to loader
+// chassis.moveToPose(0,0,0,4000);
+// LoaderFork.extend();
+// chassis.moveToPose(0,0,0,4000);
+// //back out
+// chassis.moveToPose(0,0,0,4000, {false});
+// //score in top goal
+// chassis.moveToPose(0,0,0,4000);
+// TopScoring();
+// chassis.moveToPose(0,0,0,4000);
 }
 
 /**

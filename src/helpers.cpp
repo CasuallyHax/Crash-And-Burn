@@ -12,7 +12,7 @@ void IntakeToBucket(){
     Bucket_55W.move(0);
     Intake_Top_Front_55W.move(-127);
     Intake_Top_Back_55W.move(127);
-    Agitator_55W.move(-127);
+//    Agitator_55W.move(-127);
     colorSorting("Blue");
 }
 
@@ -27,15 +27,15 @@ void TopScoring(){
 }
 
 void MiddleScoring(){
-    Intake_Bottom_11W.move(127);
+    Intake_Bottom_11W.move(60);
     Intake_Middle_55W.move(127);
-    Intake_Top_11W.move(127);
+    Intake_Top_11W.move(60);
     Bucket_55W.move(-127);
     Agitator_55W.move(127);
 }
 
 void BottomScoring(){
-    Intake_Bottom_11W.move(-127);
+    Intake_Bottom_11W.move(-80);
     Intake_Middle_55W.move(-127);
     Intake_Top_11W.move(-127);
     Bucket_55W.move(-127);
