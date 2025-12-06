@@ -66,7 +66,7 @@ lemlib::ControllerSettings lateral_controller(6, // proportional gain (kP)
                                               100, // small error range timeout, in milliseconds
                                               3, // large error range, in inches
                                               500, // large error range timeout, in milliseconds
-                                              0 // maximum acceleration (slew)
+                                              20 // maximum acceleration (slew)
 );
 
 // angular PID controller
@@ -266,9 +266,9 @@ void autonomous() {
 
 //Match Autons
 //Score Preload in middle
-chassis.moveToPose(40.7, -23, 270, 2500);
+chassis.moveToPose(46, -28, 270, 2500);
 IntakeToBucket();
-chassis.moveToPose(14.6,-22.7,0,4000);
+chassis.moveToPose(14.6,-18,0,4000);
 chassis.moveToPose(6,-15.5,315,3000);
 pros::delay(2000);
 MiddleScoring();

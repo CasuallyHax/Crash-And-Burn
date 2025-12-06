@@ -35,7 +35,7 @@ void MiddleScoring(){
 }
 
 void BottomScoring(){
-    Intake_Bottom_11W.move(-80);
+    Intake_Bottom_11W.move(-40);
     Intake_Middle_55W.move(-127);
     Intake_Top_11W.move(-127);
     Bucket_55W.move(-127);
