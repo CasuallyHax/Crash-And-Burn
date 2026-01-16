@@ -5,10 +5,11 @@
 #include "helpers.hpp"
 #include "globals.hpp" // IWYU pragma: keep
 #include "colorSorting.hpp"
+#include "pros/rtos.h"
 //ASSET(PushBackAutons1);
 
-pros::MotorGroup left_motors({-13,-14}, pros::MotorGearset::blue); // left motors on ports 1, 2, 3
-pros::MotorGroup right_motors({19,17}, pros::MotorGearset::blue); // right motors on ports 4, 5, 6
+pros::MotorGroup left_motors({-11,-1,-2}, pros::MotorGearset::blue); // left motors on ports 1, 2, 3
+pros::MotorGroup right_motors({20,9,10}, pros::MotorGearset::blue); // right motors on ports 4, 5, 6
 
 // //creating intake motor group
 
@@ -23,12 +24,12 @@ lemlib::Drivetrain drivetrain(&left_motors, // left motor group
                               &right_motors, // right motor group
                               9, // 10 inch track width
                               lemlib::Omniwheel::NEW_325, // using new 4" omnis
-                              600, // drivetrain rpm is 360
+                              450, // drivetrain rpm is 360
                               2 // horizontal drift is 2 (for now)
 );
 
 // create an imu on port 10
-pros::Imu imu(3);
+pros::Imu imu(17);
 
 /**
  * A callback function for LLEMU's center button.
@@ -55,12 +56,12 @@ lemlib::OdomSensors sensors(nullptr, // vertical tracking wheel 1, set to null
                             nullptr, // horizontal tracking wheel 1
                             nullptr, // horizontal tracking wheel 2, set to nullptr as we don't have a second one
                             &imu // inertial sensor
+                            
 );
 
-// lateral PID controller
-lemlib::ControllerSettings lateral_controller(6, // proportional gain (kP)
+lemlib::ControllerSettings lateral_controller(10, // proportional gain (kP)
                                               0, // integral gain (kI)
-                                              30, // derivative gain (kD)
+                                              70, // derivative gain (kD)
                                               3, // anti windup
                                               1, // small error range, in inches
                                               100, // small error range timeout, in milliseconds
@@ -70,15 +71,15 @@ lemlib::ControllerSettings lateral_controller(6, // proportional gain (kP)
 );
 
 // angular PID controller
-lemlib::ControllerSettings angular_controller(4, // proportional gain (kP)
+lemlib::ControllerSettings angular_controller(7, // proportional gain (kP)
                                               0, // integral gain (kI)
-                                              50, // derivative gain (kD)
+                                              70, // derivative gain (kD)
                                               3, // anti windup
                                               1, // small error range, in inches
                                               100, // small error range timeout, in milliseconds
                                               3, // large error range, in inches
                                               500, // large error range timeout, in milliseconds
-                                              20 // maximum acceleration (slew)
+                                              0 // maximum acceleration (slew)
 );
 
 // create the chassis
@@ -94,7 +95,7 @@ void initialize() {
     pros::lcd::initialize(); // initialize brain screen
     chassis.calibrate();
 
-    colorSorter.set_led_pwm(0);
+//    colorSorter.set_led_pwm(0);
 
     void InitializeMotors();
 
@@ -149,168 +150,91 @@ void autonomous() {
     left_motors.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
     right_motors.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
     //IMPORTANT
-    chassis.setPose(61.8,-18,180);
+    chassis.setPose(0,0,0);
 
-    // chassis.moveToPoint(0,24,20000);
     //PID tuning, comment out when not using
     //Lateral PID tuning
-    //    chassis.moveToPoint(0,24, 10000);
+        //move to loader
+        chassis.moveToPoint(0,28.5, 10000, {.maxSpeed=90});
+        chassis.turnToHeading(90,2000, {.maxSpeed=90});
+        loaderFork.extend();
+        pros::delay(200);
+        intake();
+        pros::delay(200);
+        //grab balls and jiggle
+        chassis.moveToPose(20,30.5,90,2000, {.maxSpeed=100});
+        chassis.moveToPoint(-70,29, 250, {.forwards = false, .maxSpeed=100}, false);
+        pros::delay(200);
+        chassis.moveToPoint(20,30.5,2500, {.maxSpeed=100});
+        chassis.moveToPoint(-70,29, 250, {.forwards = false, .maxSpeed=100},false);
+        pros::delay(200);
+        chassis.moveToPoint(20,30.5,3500, {.maxSpeed=100});
+        //go to long goal
+        chassis.moveToPoint(-70,32, 5000, {.forwards = false, .maxSpeed=90});
+        pros::delay(1250);
+        loaderFork.retract();
+        topOuttake();
+        pros::delay(5000);
+        //park
+        chassis.moveToPose(13,5,180,4500,{.maxSpeed=100}, false);
+        chassis.moveToPoint(13,30,300,{.forwards = false});
+        chassis.moveToPoint(13,-25,9000);
 
     //Angular PID tuning
-    //     chassis.turnToHeading(90,2000);
+   // chassis.turnToHeading(90,5000);
+
+    //Skills Auton
+    //take blocks from - - loader
+    //     intake();
+    //     loaderFork.extend();
+    //     chassis.moveToPose(0,0,0,0);
+    //     chassis.moveToPose(0,0,0,0);
+    //     pros::delay(0);
+    // //go to + - corner and score
+    //     chassis.moveToPose(0,0,0,0);
+    //     loaderFork.retract();
+    //     chassis.moveToPose(0,0,0,0);
+    //     topOuttake();
+    //     pros::delay(0);
+    // //take blocks from + - loader
+    //     intake();
+    //     loaderFork.extend();
+    //     chassis.moveToPose(0,0,0,0);
+    //     pros::delay(0);
+    // //go to + - corner and score
+    //     chassis.moveToPose(0,0,0,0, {false});
+    //     loaderFork.retract();
+    //     topOuttake();
+    //     pros::delay(0);
+    // //take blocks from + + loader
+    //     intake();
+    //     loaderFork.extend();
+    //     chassis.moveToPose(0,0,0,0);
+    //     chassis.moveToPose(0,0,0,0);
+    //     pros::delay(0);
+    // //go to - + corner and score
+    //     chassis.moveToPose(0,0,0,0);
+    //     loaderFork.retract();
+    //     chassis.moveToPose(0,0,0,0);
+    //     topOuttake();
+    //     pros::delay(0);
+    // //take blocks from - + loader
+    //     intake();
+    //     loaderFork.extend();
+    //     chassis.moveToPose(0,0,0,0);
+    //     pros::delay(0);
+    // //go to - + corner and score
+    //     chassis.moveToPose(0,0,0,0, {false});
+    //     loaderFork.retract();
+    //     topOuttake();
+    //     pros::delay(0);
+    // //go park and clear parking zone
+    //     intake();
+    //     chassis.moveToPose(0,0,0,0, {}, false);
+    //     loaderFork.extend();
+    //     chassis.turnToHeading(900000, 9000);
 
 
-
-    //Skills Option A
-    // //go to closest loader
-    // colorSorting();
-    // Hood.extend();
-    // chassis.moveToPose(0,0,0,4000);
-    // //back out of it
-    // chassis.moveToPose(0,0,0,4000, {.forwards = false}); 
-    // chassis.moveToPose(0,0,90,4000);
-    // //go to other two reds
-    // chassis.moveToPose(0,0,0,4000);
-    // //grab them
-    // chassis.moveToPose(0,0,0,4000);
-    // //score blocks in middle zone
-    // Aligner.retract();
-    // Hood.extend();
-    // chassis.moveToPose(0,0,0,4000);
-    // MiddleScoring();
-    // //back up
-    // chassis.moveToPose(0,0,0,4000, {.forwards = false});
-    // Aligner.extend();
-    // Hood.retract();
-    // colorSorting();
-    // //go to parking area to grab 6 blocks from there
-    // chassis.moveToPose(0,0,0,4000);
-    // //Move out of parking to release fork
-    // chassis.moveToPose(0,0,0,4000);
-    // Hood.extend();
-    // chassis.moveToPose(0,0,0,4000);
-    // //go to loader zone and only grab three blocks, mess with a delay to consistently only grab three
-    // chassis.moveToPose(0,0,0,4000);
-    // //back up
-    // chassis.moveToPose(0,0,0,4000, {.forwards = false});
-    // //score in long goal
-    // Aligner.extend();
-    // Hood.retract();
-    // chassis.moveToPose(0,0,0,4000);
-    // TopScoring();
-    // //back up
-    // chassis.moveToPose(0,0,0,4000, {.forwards = false});
-    // Color TeamColor = Color::BLUE;
-    // Hood.extend();
-    // colorSorting();
-    // //grab the other three blues from loading zone
-    // chassis.moveToPose(0,0,0,4000);
-    // Hood.retract();
-    // //position robot to grab two blues
-    // chassis.moveToPose(0,0,0,4000);
-    // //grab other two blues
-    // chassis.moveToPose(0,0,0,4000);
-    // chassis.moveToPose(0,0,0,4000);
-    // //score them in bottom goal
-    // chassis.moveToPose(0,0,0,4000);
-    // chassis.moveToPose(0,0,0,4000);
-    // BottomScoring();
-    // //back up
-    // chassis.moveToPose(0,0,0,4000, {.forwards = false});
-    // //park
-    // chassis.moveToPose(0,0,0,4000);
-
-
-
-    // //Skills Option B
-    // //grab from bottom loader
-    // Hood.extend();
-    // colorSorting();
-    // chassis.moveToPose(0,0,0,4000);
-    // //back up
-    // chassis.moveToPose(0,0,0,4000, {.forwards = false});
-    // Hood.retract();
-    // //grab two reds (bottom left)
-    // chassis.moveToPose(0,0,0,4000);
-    // //grab other two reds (bottom right)
-    // chassis.moveToPose(0,0,0,4000);
-    // chassis.moveToPose(0,0,0,4000);
-    // //grab other two reds and score in bottom (top right)
-    // chassis.moveToPose(0,0,0,4000);
-    // chassis.moveToPose(0,0,0,4000);
-    // BottomScoring();
-    // //back up
-    // chassis.moveToPose(0,0,0,4000, {.forwards = false});
-    // //go to loader
-    // Hood.extend();
-    // colorSorting();
-    // chassis.moveToPose(0,0,0,4000);
-    // //back up
-    // chassis.moveToPose(0,0,0,4000, {.forwards = false});
-    // //grab other two reds (top left)
-    // chassis.moveToPose(0,0,0,4000);
-    // //score in middle (top left)
-    // Aligner.retract();
-    // Hood.extend();
-    // chassis.moveToPose(0,0,0,4000);
-    // MiddleScoring();
-    // //unload loader (top left)
-    // Hood.extend();
-    // IntakeToBucket();
-    // chassis.moveToPose(0,0,0,4000);
-    // //back up
-    // chassis.moveToPose(0, 0, 0, 4000, {.forwards = false});
-    // Hood.retract();
-    // //park
-    // chassis.moveToPose(0,0,0,4000)
-
-//Match Autons
-//Score Preload in middle
-chassis.moveToPose(46, -28, 270, 2500);
-IntakeToBucket();
-chassis.moveToPose(14.6,-18,0,4000);
-chassis.moveToPose(6,-15.5,315,3000);
-pros::delay(2000);
-MiddleScoring();
-pros::delay(4000);
-IntakeToBucket();
-chassis.moveToPose(24, -24.8, 0, 3000, {.forwards = false});
-chassis.moveToPose(20, 26, 0, 3000);
-chassis.moveToPose(8.5, 3, -135, 3000);
-pros::delay(4000);
-BottomScoring();
-pros::delay(200);
-chassis.moveToPose(9.5, 4, -135, 3000, {.forwards = false});
-pros::delay(1000);
-chassis.moveToPose(43, 43, 90, 4000, {.forwards = false});
-pros::delay(400);
-IntakeToBucket();
-LoaderFork.extend();
-chassis.moveToPose(55, 43, 90, 3000);
-// // pros::delay(400);
-// IntakeToBucket();
-// //back out
-// chassis.moveToPose(0,0,0,4000, {.forwards = false});
-// //pick up blocks
-// chassis.moveToPose(0,0,0,4000);
-// chassis.moveToPose(0,0,0,4000);
-// chassis.moveToPose(0,0,0,4000);
-// //score in bottom
-// chassis.moveToPose(0,0,0,4000);
-// BottomScoring();
-// pros::delay(600);
-// //back out
-// chassis.moveToPose(0,0,0,4000, {.forwards = false});
-// //go to loader
-// chassis.moveToPose(0,0,0,4000);
-// LoaderFork.extend();
-// chassis.moveToPose(0,0,0,4000);
-// //back out
-// chassis.moveToPose(0,0,0,4000, {false});
-// //score in top goal
-// chassis.moveToPose(0,0,0,4000);
-// TopScoring();
-// chassis.moveToPose(0,0,0,4000);
 }
 
 /**
@@ -330,11 +254,13 @@ chassis.moveToPose(55, 43, 90, 3000);
 
 
 void opcontrol() {
+    right_motors.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
+    left_motors.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
     // loop forever
     while (true) {
         // get left y and right x positions
-        int leftY = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
-        int rightX = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
+        int leftY = (controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y))*.8;
+        int rightX = (controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X))*.8;
 
         // move the robot
         chassis.arcade(leftY, rightX);

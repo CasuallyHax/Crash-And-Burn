@@ -1,6 +1,9 @@
 #include "globals.hpp" // IWYU pragma: keep
 #include "main.h" // IWYU pragma: keep
 
+void intake();
+void topOuttake();
+void bottomOuttake();
 //Preset spin directions
 void IntakeToBucket();
 void TopScoring();
