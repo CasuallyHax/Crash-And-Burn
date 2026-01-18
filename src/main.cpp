@@ -155,15 +155,15 @@ void autonomous() {
     //PID tuning, comment out when not using
     //Lateral PID tuning
         //move to loader
-        chassis.moveToPoint(0,28.5, 10000, {.maxSpeed=90});
+        chassis.moveToPoint(0,28, 10000, {.maxSpeed=90});
         chassis.turnToHeading(90,2000, {.maxSpeed=90});
         loaderFork.extend();
         pros::delay(200);
         intake();
         pros::delay(200);
         //grab balls and jiggle
-        chassis.moveToPose(20,30.5,90,2000, {.maxSpeed=100});
-        chassis.moveToPoint(-70,29, 250, {.forwards = false, .maxSpeed=100}, false);
+        chassis.moveToPose(20,30,93,2000, {.maxSpeed=100});
+        chassis.moveToPoint(-70,30, 250, {.forwards = false, .maxSpeed=100}, false);
         pros::delay(200);
         chassis.moveToPoint(20,30.5,2500, {.maxSpeed=100});
         chassis.moveToPoint(-70,29, 250, {.forwards = false, .maxSpeed=100},false);
@@ -173,66 +173,72 @@ void autonomous() {
         chassis.moveToPoint(-70,32, 5000, {.forwards = false, .maxSpeed=90});
         pros::delay(1250);
         loaderFork.retract();
+        Descore.extend();
         topOuttake();
-        pros::delay(5000);
-        //park
-        chassis.moveToPose(13,5,180,4500,{.maxSpeed=100}, false);
-        chassis.moveToPoint(13,30,300,{.forwards = false});
-        chassis.moveToPoint(13,-25,9000);
+        pros::delay(2000);
+        bottomOuttake();
+        pros::delay(600);
+        topOuttake();
+        pros::delay(2400);
+        // //park
+        // chassis.moveToPoint(13,19,2000,{.maxSpeed=100});
+        // chassis.moveToPose(20,2,180,4500,{.maxSpeed=100}, false);
+        // chassis.moveToPoint(26,30,350,{.forwards = false});
+        // chassis.moveToPoint(30,-60,3200, {.minSpeed = 127});
 
-    //Angular PID tuning
-   // chassis.turnToHeading(90,5000);
+//     Angular PID tuning
+//    chassis.turnToHeading(90,5000);
 
-    //Skills Auton
-    //take blocks from - - loader
-    //     intake();
-    //     loaderFork.extend();
-    //     chassis.moveToPose(0,0,0,0);
-    //     chassis.moveToPose(0,0,0,0);
-    //     pros::delay(0);
-    // //go to + - corner and score
-    //     chassis.moveToPose(0,0,0,0);
-    //     loaderFork.retract();
-    //     chassis.moveToPose(0,0,0,0);
-    //     topOuttake();
-    //     pros::delay(0);
-    // //take blocks from + - loader
-    //     intake();
-    //     loaderFork.extend();
-    //     chassis.moveToPose(0,0,0,0);
-    //     pros::delay(0);
-    // //go to + - corner and score
-    //     chassis.moveToPose(0,0,0,0, {false});
-    //     loaderFork.retract();
-    //     topOuttake();
-    //     pros::delay(0);
-    // //take blocks from + + loader
-    //     intake();
-    //     loaderFork.extend();
-    //     chassis.moveToPose(0,0,0,0);
-    //     chassis.moveToPose(0,0,0,0);
-    //     pros::delay(0);
-    // //go to - + corner and score
-    //     chassis.moveToPose(0,0,0,0);
-    //     loaderFork.retract();
-    //     chassis.moveToPose(0,0,0,0);
-    //     topOuttake();
-    //     pros::delay(0);
-    // //take blocks from - + loader
-    //     intake();
-    //     loaderFork.extend();
-    //     chassis.moveToPose(0,0,0,0);
-    //     pros::delay(0);
-    // //go to - + corner and score
-    //     chassis.moveToPose(0,0,0,0, {false});
-    //     loaderFork.retract();
-    //     topOuttake();
-    //     pros::delay(0);
-    // //go park and clear parking zone
-    //     intake();
-    //     chassis.moveToPose(0,0,0,0, {}, false);
-    //     loaderFork.extend();
-    //     chassis.turnToHeading(900000, 9000);
+//     Skills Auton
+//     take blocks from - - loader
+//         intake();
+//         loaderFork.extend();
+//         chassis.moveToPose(0,0,0,0);
+//         chassis.moveToPose(0,0,0,0);
+//         pros::delay(0);
+//     //go to + - corner and score
+//         chassis.moveToPose(0,0,0,0);
+//         loaderFork.retract();
+//         chassis.moveToPose(0,0,0,0);
+//         topOuttake();
+//         pros::delay(0);
+//     //take blocks from + - loader
+//         intake();
+//         loaderFork.extend();
+//         chassis.moveToPose(0,0,0,0);
+//         pros::delay(0);
+//     //go to + - corner and score
+//         chassis.moveToPose(0,0,0,0, {false});
+//         loaderFork.retract();
+//         topOuttake();
+//         pros::delay(0);
+//     //take blocks from + + loader
+//         intake();
+//         loaderFork.extend();
+//         chassis.moveToPose(0,0,0,0);
+//         chassis.moveToPose(0,0,0,0);
+//         pros::delay(0);
+//     //go to - + corner and score
+//         chassis.moveToPose(0,0,0,0);
+//         loaderFork.retract();
+//         chassis.moveToPose(0,0,0,0);
+//         topOuttake();
+//         pros::delay(0);
+//     //take blocks from - + loader
+//         intake();
+//         loaderFork.extend();
+//         chassis.moveToPose(0,0,0,0);
+//         pros::delay(0);
+//     //go to - + corner and score
+//         chassis.moveToPose(0,0,0,0, {false});
+//         loaderFork.retract();
+//         topOuttake();
+//         pros::delay(0);
+//     //go park and clear parking zone
+//         intake();
+//         chassis.moveToPose(0,0,0,0, {}, false);
+//         loaderFork.extend();
+//         chassis.turnToHeading(900000, 9000);
 
 
 }
@@ -257,6 +263,8 @@ void opcontrol() {
     right_motors.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
     left_motors.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
     // loop forever
+    Descore.extend();
+    loaderFork.extend();
     while (true) {
         // get left y and right x positions
         int leftY = (controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y))*.8;
