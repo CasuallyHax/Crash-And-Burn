@@ -1,5 +1,5 @@
 #include "globals.hpp" 
-#include "pros/misc.h"
+#include "pros/misc.hpp"
 #include "helpers.hpp"
 
 int IntakeMode = 0;
@@ -11,6 +11,11 @@ void intake(){
 void topOuttake(){
     intakeMotor.move(-127);
     hoodMotor.move(127);   
+}
+void midOuttake(){
+    intakeMotor.move(-85);
+    hoodMotor.move(85);
+    midScore.retract();
 }
 void bottomOuttake(){
     intakeMotor.move(127*.8);
@@ -27,13 +32,15 @@ void controllerCode(){
         intake();
     }
 
-    if(controller.get_digital_new_release(pros::E_CONTROLLER_DIGITAL_L1)||controller.get_digital_new_release(pros::E_CONTROLLER_DIGITAL_L2)||controller.get_digital_new_release(pros::E_CONTROLLER_DIGITAL_R1)){
+   // if(controller.get_digital_new_release(pros::E_CONTROLLER_DIGITAL_L1)||controller.get_digital_new_release(pros::E_CONTROLLER_DIGITAL_L2)||controller.get_digital_new_release(pros::E_CONTROLLER_DIGITAL_R1)||controller.get_digital_new_release(pros::E_CONTROLLER_DIGITAL_A)){
+       if(controller.get_digital_new_release(pros::E_CONTROLLER_DIGITAL_L1)||controller.get_digital_new_release(pros::E_CONTROLLER_DIGITAL_L2)||controller.get_digital_new_release(pros::E_CONTROLLER_DIGITAL_R1)){
         IntakeMode = 4;
     }
 
     if(IntakeMode == 4){
         intakeMotor.move(0);
         hoodMotor.move(0);
+        midScore.extend();
     }
 
     //Bottom
@@ -51,7 +58,15 @@ void controllerCode(){
     if(IntakeMode == 3){
         topOuttake();
     }
-    
+
+    //Mid
+    if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_A)){
+        IntakeMode = 5;
+    }
+    if(IntakeMode == 5){
+        midOuttake();
+    }
+
     //Descore
     if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_R2)){
         Descore.toggle();
@@ -64,6 +79,3 @@ void controllerCode(){
 
 }
 
-void pneumaticCode(){
-    
-}

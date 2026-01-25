@@ -34,14 +34,12 @@
  */
 #define PROS_USE_LITERALS
 
-#include "api.h" // IWYU pragma: keep
+#include "api.h"
 
 /**
  * You should add more #includes here
  */
 //#include "okapi/api.hpp"
-
-#include "globals.hpp" // IWYU pragma: keep
 
 /**
  * If you find doing pros::Motor() to be tedious and you'd prefer just to do

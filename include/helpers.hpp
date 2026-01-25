@@ -3,15 +3,11 @@
 
 void intake();
 void topOuttake();
+void midOuttake();
 void bottomOuttake();
-//Preset spin directions
-void IntakeToBucket();
-void TopScoring();
-void MiddleScoring();
-void BottomScoring();
+
 
 void colorSorting(std::string goodColor);
 
 void controllerCode();
 
-void pneumaticCode();
