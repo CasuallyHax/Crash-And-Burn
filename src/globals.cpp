@@ -76,3 +76,21 @@ pros::Distance dNorth(14);
 pros::Distance dEast(15);
 pros::Distance dSouth(13);
 pros::Distance dWest(12);
+
+//Auton selector
+int auton = 0;
+
+const char* autonNames[] = {
+  "Skills",
+  "Right Full",
+  "Left Full",
+  "Right Quick",
+  "Left Quick",
+  "Solo AWP",
+  "Skills",
+  "Drive 24in",
+  "Turn 90deg"
+};
+
+const int AUTON_COUNT = 8;
+

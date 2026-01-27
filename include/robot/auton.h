@@ -1,17 +1,15 @@
 #pragma once
 
-// Autonomous routines
-void Auton1(); // Autonomous winpoint blue positive side / red positive side
-void Auton2(); // Autonomous winpoint blue negative side / red negative side
-void Auton3(); // Basic autonomous routine
-void Auton5(); // Skills challenge autonomous
-
 // Match specific routines
 void match1(); // Match specific autonomous routine 1
 void match2(); // Match specific autonomous routine 2
 void test360();
 
-void redNeg();
-void redPos();
-void bluePos();
-void blueNeg();
+void skills1();
+void rightFull();
+void leftFull();
+void rightQuick();
+void leftQuick();
+void soloAWP();
+void drive24();
+void turn90();

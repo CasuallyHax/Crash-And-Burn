@@ -4,25 +4,60 @@
 #include "pros/motors.h"
 #include "pros/rtos.hpp"
 #include "robot/auton.h"
-
+#include "helpers.hpp"
 #include <cmath>
 #include <iostream>
 #include <string>
 
 using namespace lemlib;
 //match autons
-void redNeg(){
-  chassis.setBrakeMode(pros::E_MOTOR_BRAKE_BRAKE);
+void skills1(){
+      chassis.setPose(-48,0,180);
+    chassis.moveToPose(-48, -46.5,270, 10000);
+    chassis.turnToHeading(270,2000);
+    loaderFork.extend();
+    intake();
+    pros::delay(500);
+    chassis.moveToPoint(-75,-46.5,3000);
+    pros::delay(5000);
+    chassis.moveToPoint(-48,-48,3000, {.forwards = false, .minSpeed = 72, .earlyExitRange = 8});
+    chassis.moveToPoint(-27.5, -60, 3000, {.forwards = false});
+    chassis.moveToPoint(45, -60, 4000, {.forwards = false});
+    chassis.turnToHeading(0,500);
+    chassis.moveToPoint(48,-48,2000);
+    chassis.turnToHeading(90,500);
+    chassis.moveToPoint(0,-48,8000,{.forwards = false}, true);
+    topOuttake();
+    pros::delay(5000);
+    intake();
+    chassis.moveToPose(80,-46.5,90,5000,{},false);
+    chassis.moveToPoint(0,-48,8000,{.forwards = false}, true);
+    topOuttake();
 }
-void redPos(){
-  chassis.setBrakeMode(pros::E_MOTOR_BRAKE_BRAKE);
-}
-void bluePos(){
-  chassis.setBrakeMode(pros::E_MOTOR_BRAKE_BRAKE);
-}
-void blueNeg(){
-  chassis.setBrakeMode(pros::E_MOTOR_BRAKE_BRAKE);
-}
+
+
+//match autons
+void rightFull(){}
+
+
+void leftFull(){}
+
+
+void rightQuick(){}
+
+
+void leftQuick(){}
+
+
+void soloAWP(){}
+
+
+
+
+
+
+
+
 
 //Testing autons
 void drive24(){

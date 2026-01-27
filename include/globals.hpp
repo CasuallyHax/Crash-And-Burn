@@ -2,7 +2,7 @@
 #include "lemlib/api.hpp"
 #include "lemlib/chassis/chassis.hpp"
 #include "lemlib/chassis/trackingWheel.hpp"
-
+#include "pros/apix.h"
 #include "main.h"
 #include "pros/distance.hpp"
 #include "pros/motors.h"
@@ -44,3 +44,13 @@ extern pros::Distance dNorth;
 extern pros::Distance dEast;
 extern pros::Distance dSouth;
 extern pros::Distance dWest;
+
+//Auton selector
+
+
+
+// auton selector
+extern int auton;
+
+extern const char* autonNames[];
+extern const int AUTON_COUNT;
