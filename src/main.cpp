@@ -60,14 +60,27 @@ void competition_initialize() {}
 
  
 void autonomous() {
-    chassis.setPose(0,0,0);
-    chassis.moveToPoint(0, 48, 10000);
-    pros::delay(3000);
-    pros::lcd::print(0, "X: %f", chassis.getPose().x);
-    pros::lcd::print(1, "Y: %f", chassis.getPose().y);
-    pros::lcd::print(2, "Theta: %f", chassis.getPose().theta);
-    pros::delay(2000);
-
+    chassis.setPose(-48,0,180);
+    chassis.moveToPose(-48, -46.5,270, 10000);
+    chassis.turnToHeading(270,2000);
+    loaderFork.extend();
+    intake();
+    pros::delay(500);
+    chassis.moveToPoint(-75,-46.5,3000);
+    pros::delay(5000);
+    chassis.moveToPoint(-48,-48,3000, {.forwards = false, .minSpeed = 72, .earlyExitRange = 8});
+    chassis.moveToPoint(-27.5, -60, 3000, {.forwards = false});
+    chassis.moveToPoint(45, -60, 4000, {.forwards = false});
+    chassis.turnToHeading(0,500);
+    chassis.moveToPoint(48,-48,2000);
+    chassis.turnToHeading(90,500);
+    chassis.moveToPoint(0,-48,8000,{.forwards = false}, true);
+    topOuttake();
+    pros::delay(5000);
+    intake();
+    chassis.moveToPose(80,-46.5,90,5000,{},false);
+    chassis.moveToPoint(0,-48,8000,{.forwards = false}, true);
+    topOuttake();
 }
 
 /**

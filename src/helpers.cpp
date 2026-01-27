@@ -32,8 +32,7 @@ void controllerCode(){
         intake();
     }
 
-   // if(controller.get_digital_new_release(pros::E_CONTROLLER_DIGITAL_L1)||controller.get_digital_new_release(pros::E_CONTROLLER_DIGITAL_L2)||controller.get_digital_new_release(pros::E_CONTROLLER_DIGITAL_R1)||controller.get_digital_new_release(pros::E_CONTROLLER_DIGITAL_A)){
-       if(controller.get_digital_new_release(pros::E_CONTROLLER_DIGITAL_L1)||controller.get_digital_new_release(pros::E_CONTROLLER_DIGITAL_L2)||controller.get_digital_new_release(pros::E_CONTROLLER_DIGITAL_R1)){
+    if(controller.get_digital_new_release(pros::E_CONTROLLER_DIGITAL_L1)||controller.get_digital_new_release(pros::E_CONTROLLER_DIGITAL_L2)||controller.get_digital_new_release(pros::E_CONTROLLER_DIGITAL_R1)||controller.get_digital_new_release(pros::E_CONTROLLER_DIGITAL_A)){
         IntakeMode = 4;
     }
 
