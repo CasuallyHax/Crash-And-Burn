@@ -157,10 +157,7 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 
-
-
 void opcontrol() {
-
     //Start touching red park
     chassis.setPose(-48,-12,180);
     chassis.moveToPoint(-48, -46, 3000);
@@ -169,16 +166,14 @@ void opcontrol() {
     loaderFork.extend();
     intake();
     pros::delay(500);
-    //wiggle in - - match loader
-    chassis.moveToPoint(-75,-46.5,3000);
-    pros::delay(500);
-    chassis.moveToPoint(75,-46.5,150, {.forwards = false});
+    //wiggle in - - match loader    
+    chassis.moveToPoint(-85,-46.5,1700);
+    pros::delay(1000);
+    for(int move1=0;move1<7;move1++){
+      chassis.moveToPoint(-75,-46.5,150);
     pros::delay(200);
-    chassis.moveToPoint(-75,-46.5,3000);
-    chassis.moveToPoint(75,-46.5,150, {.forwards = false});
-    pros::delay(200);
-    chassis.moveToPoint(-75,-46.5,3000);
-    pros::delay(4750);
+    }
+    pros::delay(4000);
     //go to + - to score
     chassis.moveToPoint(-48,-50,3000, {.forwards = false, .minSpeed = 72, .earlyExitRange = 8});
     chassis.moveToPoint(-27.5, -62, 3000, {.forwards = false});
@@ -201,12 +196,12 @@ void opcontrol() {
     pros::delay(5000);
     //grab + - match loader and wiggle
     intake();
-    chassis.moveToPose(80,-47.5,90,1500,{}, true);
-    pros::delay(1500);
-    chassis.moveToPose(-80,-47.5,90,150, {.forwards = false});
-    chassis.moveToPose(80,-47.5,90,5000);
-    chassis.moveToPose(-80,-47.5,90,150, {.forwards = false});
-    chassis.moveToPose(80,-47.5,90,5000);
+    chassis.moveToPoint(80,-47.5,1700);
+    for(int move1=0;move1<7;move1++){
+      chassis.moveToPoint(80,-47.5,150);
+    pros::delay(200);
+    }
+    pros::delay(4000);
     //score in + -
     chassis.moveToPoint(0,-49,8000,{.forwards = false});
     pros::delay(1000);
@@ -218,14 +213,16 @@ void opcontrol() {
     chassis.turnToHeading(0,1000);
     chassis.moveToPoint(40,48,2500, {.maxSpeed = 100});
     chassis.turnToHeading(90, 1000);
-    chassis.moveToPoint(70, 48, 3000, {}, false);
     //match load + + and wiggle
-    pros::delay(1000);
-    chassis.moveToPoint(-70,48,100,{.forwards = false});
-    chassis.moveToPoint(70, 48, 5000, {}, false);
-    loaderFork.retract();
+      chassis.moveToPoint(70,48,1700);
+    for(int move1=0;move1<5;move1++){
+      chassis.moveToPoint(70,48,150);
+      pros::delay(200);
+    }
+    pros::delay(4000);
     //go to - + and score
     chassis.moveToPoint(40,48,2500, {.forwards = false, .minSpeed = 72, .earlyExitRange = 8});
+    loaderFork.retract();
     chassis.moveToPoint(25,61,2000);
     chassis.moveToPoint(-48,61,5000);
     chassis.moveToPoint(-48,48,2000);
@@ -237,11 +234,12 @@ void opcontrol() {
     pros::delay(7000);
     intake();
     //wiggle
-    chassis.moveToPoint(-75,48,2000);
-    chassis.moveToPoint(75,48,150, {.forwards = false});
-    chassis.moveToPoint(-75,48,2000);
-    chassis.moveToPoint(75,48,150, {.forwards = false});
-    chassis.moveToPoint(-75,48,7000);
+      chassis.moveToPoint(-75,48,1700);
+    for(int move1=0;move1<7;move1++){
+      chassis.moveToPoint(-75,48,150);
+      pros::delay(200);
+    }
+    pros::delay(4000);
     //score - +
     chassis.moveToPoint(75,48,7000, {.forwards = false},true);
     pros::delay(850);
