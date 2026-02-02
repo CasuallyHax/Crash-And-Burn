@@ -1,55 +1,316 @@
 #include "globals.hpp"
 #include "lemlib/chassis/chassis.hpp"
 #include "main.h" // IWYU pragma: export
+#include "pros/abstract_motor.hpp"
 #include "pros/motors.h"
 #include "pros/rtos.hpp"
-#include "robot/auton.h"
+#include "robot/auton.hpp"
 #include "helpers.hpp"
 #include <cmath>
 #include <iostream>
 #include <string>
 
 using namespace lemlib;
+
+int distint = 0;
+float nDistCenter = 5.25;
+const float sDistCenter = 2.5;
+const float eDistCenter = 4.5;
+const float wDistCenter = 6.625;
+double seventy = 70;
+void distanceCode(std::string distance){
+
+    int counter=1;
+  if(distance == "North"){
+    distint = 1;
+  } else if(distance == "South"){
+    distint = 2;
+  } else if (distance == "East"){
+    distint = 3;
+  } else if (distance == "West"){
+    distint = 4;}
+  switch(distint){
+    case 1:
+    //facing north
+    chassis.setPose(
+    70-dEast.get_distance()/25.4-eDistCenter,
+    70-dNorth.get_distance()/25.4-nDistCenter,
+    chassis.getPose().theta);
+    break;
+    
+    case 2:
+    //facing south
+    chassis.setPose(
+    dEast.get_distance()/25.4+eDistCenter-70,
+    dNorth.get_distance()/25.4+nDistCenter-70,
+    chassis.getPose().theta);
+    break;
+
+    case 3:
+    //facing east
+    chassis.setPose(
+    70-dNorth.get_distance()/25.4-nDistCenter,
+    dEast.get_distance()/25.4+eDistCenter-70,
+    chassis.getPose().theta);
+    while(1){
+    pros::lcd::print(3, "counter: %d", counter++); // x
+    pros::lcd::print(4, "x: %f", 70-dNorth.get_distance()/25.4-nDistCenter); // x
+    pros::lcd::print(5, "y: %f", 70-dNorth.get_distance()/25.4-nDistCenter); // y
+    pros::delay(50);}
+    break;
+    
+    case 4:
+    //facing west
+    chassis.setPose(
+    dNorth.get_distance()/25.4+nDistCenter-70,
+    70-dEast.get_distance()/25.4-eDistCenter,
+    chassis.getPose().theta);
+    break;
+    }
+  }
+
 //match autons
 void skills1(){
-      chassis.setPose(-48,0,180);
-    chassis.moveToPose(-48, -46.5,270, 10000);
+    //Start touching red park
+    chassis.setPose(-48,-12,180);
+    chassis.moveToPose(-48, -49,270, 3000);
     chassis.turnToHeading(270,2000);
+    //go to loader
     loaderFork.extend();
     intake();
     pros::delay(500);
+    //wiggle in - - match loader
     chassis.moveToPoint(-75,-46.5,3000);
-    pros::delay(5000);
-    chassis.moveToPoint(-48,-48,3000, {.forwards = false, .minSpeed = 72, .earlyExitRange = 8});
-    chassis.moveToPoint(-27.5, -60, 3000, {.forwards = false});
-    chassis.moveToPoint(45, -60, 4000, {.forwards = false});
+    pros::delay(500);
+    chassis.moveToPoint(75,-46.5,150, {.forwards = false});
+    pros::delay(200);
+    chassis.moveToPoint(-75,-46.5,3000);
+    chassis.moveToPoint(75,-46.5,150, {.forwards = false});
+    pros::delay(200);
+    chassis.moveToPoint(-75,-46.5,3000);
+    pros::delay(4750);
+    //go to + - to score
+    chassis.moveToPoint(-48,-50,3000, {.forwards = false, .minSpeed = 72, .earlyExitRange = 8});
+    chassis.moveToPoint(-27.5, -62, 3000, {.forwards = false});
+    chassis.moveToPoint(45, -62, 4000, {.forwards = false});
+    chassis.waitUntilDone();
+    distanceCode("East");
+    pros::delay(200);
     chassis.turnToHeading(0,500);
     chassis.moveToPoint(48,-48,2000);
     chassis.turnToHeading(90,500);
     chassis.moveToPoint(0,-48,8000,{.forwards = false}, true);
+    pros::delay(1000);
     topOuttake();
     pros::delay(5000);
+    //grab + - match loader and wiggle
     intake();
-    chassis.moveToPose(80,-46.5,90,5000,{},false);
-    chassis.moveToPoint(0,-48,8000,{.forwards = false}, true);
+    chassis.moveToPose(80,-46.5,90,1500,{}, true);
+    pros::delay(1500);
+    chassis.moveToPose(-80,-46.5,90,150, {.forwards = false});
+    chassis.moveToPose(80,-46.5,90,5000);
+    chassis.moveToPose(-80,-46.5,90,150, {.forwards = false});
+    chassis.moveToPose(80,-46.5,90,5000);
+    //score in + -
+    chassis.moveToPoint(0,-48,8000,{.forwards = false});
+    pros::delay(1000);
     topOuttake();
+    pros::delay(5000);
+    //go to + + match loader
+    intake();
+    chassis.moveToPoint(40,-45,2000);
+    chassis.turnToHeading(0,1000);
+    chassis.moveToPoint(40,48,2500);
+    chassis.turnToHeading(90, 1000);
+    chassis.moveToPoint(70, 48, 3000, {}, false);
+    //match load + + and wiggle
+    pros::delay(1000);
+    loaderFork.retract();
+    chassis.moveToPoint(-70,48,100,{.forwards = false});
+    chassis.moveToPoint(70, 48, 5000, {}, false);
+    //go to - + and score
+    chassis.moveToPoint(40,48,2500, {.forwards = false, .minSpeed = 72, .earlyExitRange = 8});
+    chassis.moveToPoint(25,60,1000);
+    chassis.moveToPoint(-48,60,5000);
+    chassis.waitUntilDone();
+    distanceCode("West");
+    pros::delay(200);
+    chassis.moveToPoint(-48,48,2000);
+    chassis.moveToPoint(48,48,2000, {.forwards = false}, true);
+    pros::delay(750);
+    topOuttake();
+    //grab - + match loader
+    loaderFork.extend();
+    pros::delay(7000);
+    intake();
+    //wiggle
+    chassis.moveToPoint(-75,50,2000);
+    chassis.moveToPoint(75,50,150, {.forwards = false});
+    chassis.moveToPoint(-75,50,2000);
+    chassis.moveToPoint(75,50,150, {.forwards = false});
+    chassis.moveToPoint(-75,50,7000);
+    //score - +
+    chassis.moveToPoint(75,50,7000, {.forwards = false},true);
+    pros::delay(750);
+    topOuttake();
+    pros::delay(7000);
+    //park and clear parking
+    chassis.moveToPoint(-63,21,3000);
+    chassis.moveToPoint(-64,0,2000,{.minSpeed = 127});
 }
 
 
 //match autons
-void rightFull(){}
+void rightFull(){
+  chassis.setPose(-48,-12,180);
+  //grab loader and score 4 in long
+  chassis.moveToPose(-48, -49,270, 3000);
+  chassis.turnToHeading(270,2000);
+  //go to loader
+  loaderFork.extend();
+  intake();
+  pros::delay(3000);
+  //tune timing
+  chassis.moveToPoint(-78,-48,2000, {.forwards = false}, true);
+  pros::delay(750);
+  //score long
+  topOuttake();
+  loaderFork.retract();
+  pros::delay(1000);
+  //grab 3 field balls and score in bottom
+  intake();
+  chassis.moveToPose(-48, -49,270, 3000);
+  chassis.turnToHeading(45,200, {.minSpeed = 72, .earlyExitRange = 8});
+  chassis.moveToPoint(-9,-9,500, {}, true);
+  pros::delay(200);
+  loaderFork.extend();
+  pros::delay(500);
+  loaderFork.retract();
+  chassis.moveToPoint(-17,-17, 300);
+  bottomOuttake();
+  pros::delay(350);
+  //move 4 long balls into control
+  chassis.moveToPose(-22,-36,315, 500, {.forwards = false, .minSpeed = 72, .earlyExitRange = 8});
+  Descore.extend();
+  left_motors.set_brake_mode_all(pros::MotorBrake::hold);
+  right_motors.set_brake_mode_all(pros::MotorBrake::hold);
+  chassis.moveToPoint(-8,-36,200, {.forwards = false});
+}
 
 
-void leftFull(){}
+void leftFull(){
+  chassis.setPose(-48,12,0);
+  //grab balls from loader
+  chassis.moveToPose(-48, 49,270, 3000);
+  chassis.turnToHeading(270,2000);
+  loaderFork.extend();
+  chassis.moveToPoint(-70,49,500);
+  //tune delay to only grab 3
+  pros::delay(4500);
+  //score 4 in long
+  chassis.moveToPoint(70,49,1000,{.forwards = false},false);
+  topOuttake();
+  loaderFork.retract();
+  pros::delay(4500);
+  chassis.turnToHeading(135,200);
+  chassis.moveToPoint(-17,17,500,{},true);
+  //tune delay
+  pros::delay(200);
+  loaderFork.extend();
+  pros::delay(500);
+  loaderFork.retract();
+  //turn around to mid score 3
+  chassis.turnToHeading(315,400);
+  chassis.moveToPoint(-9,9,200, {.forwards = false}, false);
+  midOuttake();
+  //go to defend
+  chassis.moveToPose(-27.5,36,270, 750, {.minSpeed = 72});
+  Descore.extend();
+  left_motors.set_brake_mode_all(pros::MotorBrake::hold);
+  right_motors.set_brake_mode_all(pros::MotorBrake::hold);
+  chassis.moveToPoint(-11,36,400, {.forwards = false});
+}
 
 
-void rightQuick(){}
+void rightQuick(){
+  chassis.setPose(-48,-12,180);
+  //grab loader and score 4 in long
+  chassis.moveToPose(-48, -49,270, 3000);
+  chassis.turnToHeading(270,2000);
+  //go to loader
+  loaderFork.extend();
+  intake();
+  pros::delay(3000);
+  //tune timing
+  chassis.moveToPoint(75,-48,2000, {.forwards = false}, true);
+  pros::delay(750);
+  //score long
+  topOuttake();
+  loaderFork.retract();
+  pros::delay(1000);
+  chassis.moveToPose(-48,-36,270,400,{.minSpeed = 72});
+  Descore.extend();
+  left_motors.set_brake_mode_all(pros::MotorBrake::hold);
+  right_motors.set_brake_mode_all(pros::MotorBrake::hold);
+  chassis.moveToPoint(-11,-36,200);
+
+}
 
 
-void leftQuick(){}
+void leftQuick(){
+  chassis.setPose(-48,12,0);
+  //grab loader and score 4 in long
+  chassis.moveToPose(-48, 49,270, 3000);
+  chassis.turnToHeading(270,2000);
+  //go to loader
+  loaderFork.extend();
+  intake();
+  pros::delay(3000);
+  //tune timing
+  chassis.moveToPoint(75,48,2000, {.forwards = false}, true);
+  pros::delay(750);
+  //score long
+  topOuttake();
+  loaderFork.retract();
+  pros::delay(1000);
+  chassis.moveToPose(-48,36,270,400,{.minSpeed = 72});
+  Descore.extend();
+  left_motors.set_brake_mode_all(pros::MotorBrake::hold);
+  right_motors.set_brake_mode_all(pros::MotorBrake::hold);
+  chassis.moveToPoint(-11,36,200);
+}
 
 
-void soloAWP(){}
+void soloAWP(){
+  chassis.setPose(-48,5,90);
+  //drop preload in mid
+  chassis.moveToPoint(-15,5,500,{.forwards = false});
+  midOuttake();
+  pros::delay(200);
+  intake();
+  //grab 3
+  chassis.moveToPose(-25,-25,180,500, {.minSpeed = 72}, true);
+  pros::delay(100);
+  loaderFork.extend();
+  pros::delay(200);
+  chassis.turnToHeading(45,200);
+  loaderFork.retract();
+  //score in bottom
+  chassis.moveToPoint(-17,-17,500);
+  pros::delay(200);
+  bottomOuttake();
+  pros::delay(400);
+  //grab 3 from loader
+  chassis.moveToPoint(-48,-48,500);
+  chassis.turnToHeading(270,200);
+  loaderFork.extend();
+  intake();
+  chassis.moveToPoint(-70,-48,400);
+  pros::delay(500);
+  //score in long
+  chassis.moveToPoint(70,-48,400, {.forwards = false}, false);
+  topOuttake();
+}
 
 
 

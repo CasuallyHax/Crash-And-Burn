@@ -13,7 +13,7 @@ void topOuttake(){
     hoodMotor.move(127);   
 }
 void midOuttake(){
-    intakeMotor.move(-85);
+    intakeMotor.move(-127);
     hoodMotor.move(85);
     midScore.retract();
 }

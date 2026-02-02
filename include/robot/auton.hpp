@@ -1,4 +1,13 @@
+#include "globals.hpp"
 #pragma once
+
+extern int distint;
+extern float nDistCenter;
+extern const float sDistCenter;
+extern const float eDistCenter;
+extern const float wDistCenter;
+extern double seventy;
+void distanceCode(std::string distance);
 
 // Match specific routines
 void match1(); // Match specific autonomous routine 1

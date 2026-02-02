@@ -72,9 +72,9 @@ lemlib::Chassis chassis(drivetrain, // drivetrain settings
                         
 );
 
-pros::Distance dNorth(14);
-pros::Distance dEast(15);
-pros::Distance dSouth(13);
+pros::Distance dNorth(13);
+pros::Distance dEast(14);
+pros::Distance dSouth(15);
 pros::Distance dWest(12);
 
 //Auton selector

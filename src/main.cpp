@@ -8,11 +8,11 @@
 #include "pros/motors.h"
 #include "pros/motors.hpp"
 #include "pros/rtos.hpp"
-#include "robot/auton.h"
 //#include "robot/monte.hpp"
 #include "robot/skills.h"
 #include <iostream>
 #include "helpers.hpp"
+#include "robot/auton.hpp"
 
 
 void on_left() {
@@ -75,67 +75,46 @@ void competition_initialize() {}
 
  
 void autonomous() {
-    chassis.setPose(-48,-12,180);
-    chassis.moveToPose(-48, -49,270, 3000);
-    chassis.turnToHeading(270,2000);
-    loaderFork.extend();
-    intake();
-    pros::delay(500);
-    chassis.moveToPoint(-75,-46.5,3000);
-    pros::delay(500);
-    chassis.moveToPoint(75,-46.5,150, {.forwards = false});
-    pros::delay(200);
-    chassis.moveToPoint(-75,-46.5,3000);
-    pros::delay(4750);
-    chassis.moveToPoint(-48,-50,3000, {.forwards = false, .minSpeed = 72, .earlyExitRange = 8});
-    chassis.moveToPoint(-27.5, -62, 3000, {.forwards = false});
-    chassis.moveToPoint(45, -62, 4000, {.forwards = false});
-    chassis.turnToHeading(0,500);
-    chassis.moveToPoint(48,-48,2000);
-    chassis.turnToHeading(90,500);
-    chassis.moveToPoint(0,-48,8000,{.forwards = false}, true);
-    pros::delay(1000);
-    topOuttake();
-    pros::delay(7000);
-    intake();
-    chassis.moveToPose(80,-46.5,90,1500,{}, true);
-    pros::delay(1500);
-    chassis.moveToPose(-80,-46.5,90,150, {.forwards = false});
-    chassis.moveToPose(80,-46.5,90,5000);
-    chassis.moveToPoint(0,-48,8000,{.forwards = false});
-    pros::delay(1000);
-    topOuttake();
-    pros::delay(7000);
-    intake();
-    chassis.moveToPoint(40,-45,2000);
-    chassis.turnToHeading(0,1000);
-    loaderFork.retract();
-    chassis.moveToPoint(40,48,2500);
-    chassis.turnToHeading(90, 1000);
-    chassis.moveToPoint(70, 48, 3000, {}, false);
-    pros::delay(1000);
-    chassis.moveToPoint(-70,48,100,{.forwards = false});
-    chassis.moveToPoint(70, 48, 5000, {}, false);
-    chassis.moveToPoint(40,48,2500, {.forwards = false, .minSpeed = 72, .earlyExitRange = 8});
-    chassis.moveToPoint(25,60,1000);
-    chassis.moveToPoint(-48,60,5000);
-    chassis.moveToPoint(-48,48,2000);
-    chassis.moveToPoint(48,48,2000, {.forwards = false}, true);
-    pros::delay(750);
-    topOuttake();
-    loaderFork.extend();
-    pros::delay(7000);
-    intake();
-    chassis.moveToPoint(-75,48,2000);
-    chassis.moveToPoint(75,48,150, {.forwards = false});
-    chassis.moveToPoint(-75,48,7000);
-    chassis.moveToPoint(75,48,7000, {.forwards = false},true);
-    pros::delay(750);
-    topOuttake();
-    pros::delay(7000);
-    chassis.moveToPoint(-63,21,3000);
-    chassis.moveToPoint(-64,0,2000,{.minSpeed = 127});
-    //   switch (auton) {
+  chassis.setPose(-48,12,0);
+  //grab balls from loader
+  chassis.moveToPoint(-48, 48, 3000);
+  chassis.turnToHeading(270,2000);
+  loaderFork.extend();
+  intake();
+  chassis.moveToPoint(-70,47.5,4500,{},true);
+  //tune delay to only grab 3
+  pros::delay(4500);
+  //score 4 in long
+  chassis.moveToPoint(70,47.5,1000,{.forwards = false},false);
+  topOuttake();
+  pros::delay(3000);
+  loaderFork.retract();
+  intake();
+  chassis.moveToPoint(-48,48,400);
+  chassis.turnToHeading(135,250);
+  chassis.moveToPoint(-17,17,700,{},true);
+  //tune delay
+  pros::delay(800);
+  loaderFork.extend();
+  pros::delay(300);
+  //turn around to mid score 3
+  chassis.turnToHeading(315,400);
+  chassis.moveToPoint(-10,8.5,1000, {.forwards = false, .maxSpeed = 100}, false);
+  chassis.turnToHeading(315,400);  
+  midOuttake();
+  pros::delay(1500);
+  chassis.moveToPoint(-90,90,50, {}, false); 
+  chassis.moveToPoint(-9,9,1000, {.forwards = false}, false); 
+  //go to defend
+  loaderFork.retract();
+  chassis.moveToPose(-27.5,36,270, 750, {.minSpeed = 72});
+  Descore.retract();
+  left_motors.set_brake_mode_all(pros::MotorBrake::hold);
+  right_motors.set_brake_mode_all(pros::MotorBrake::hold);
+  chassis.moveToPoint(-11,36,400, {.forwards = false});
+
+
+//   switch (auton) {
 //     case 0:
 //       rightFull();
 //       break;
@@ -181,12 +160,16 @@ void autonomous() {
 
 
 void opcontrol() {
-        chassis.setPose(-48,-12,180);
-    chassis.moveToPose(-48, -49,270, 3000);
+
+    //Start touching red park
+    chassis.setPose(-48,-12,180);
+    chassis.moveToPoint(-48, -46, 3000);
     chassis.turnToHeading(270,2000);
+    //go to loader
     loaderFork.extend();
     intake();
     pros::delay(500);
+    //wiggle in - - match loader
     chassis.moveToPoint(-75,-46.5,3000);
     pros::delay(500);
     chassis.moveToPoint(75,-46.5,150, {.forwards = false});
@@ -196,58 +179,80 @@ void opcontrol() {
     pros::delay(200);
     chassis.moveToPoint(-75,-46.5,3000);
     pros::delay(4750);
+    //go to + - to score
     chassis.moveToPoint(-48,-50,3000, {.forwards = false, .minSpeed = 72, .earlyExitRange = 8});
     chassis.moveToPoint(-27.5, -62, 3000, {.forwards = false});
     chassis.moveToPoint(45, -62, 4000, {.forwards = false});
+    loaderFork.retract();
     chassis.turnToHeading(0,500);
     chassis.moveToPoint(48,-48,2000);
     chassis.turnToHeading(90,500);
+    // chassis.waitUntilDone();
+    // distanceCode("East");
+    // pros::delay(200);
+            //     // print robot location to the brain screen
+            // pros::lcd::print(0, "X: %f", chassis.getPose().x); // x
+            // pros::lcd::print(1, "Y: %f", chassis.getPose().y); // y
+            // pros::lcd::print(2, "Theta: %f", chassis.getPose().theta); // heading
     chassis.moveToPoint(0,-48,8000,{.forwards = false}, true);
     pros::delay(1000);
     topOuttake();
+    loaderFork.extend();
     pros::delay(5000);
+    //grab + - match loader and wiggle
     intake();
-    chassis.moveToPose(80,-46.5,90,1500,{}, true);
+    chassis.moveToPose(80,-47.5,90,1500,{}, true);
     pros::delay(1500);
-    chassis.moveToPose(-80,-46.5,90,150, {.forwards = false});
-    chassis.moveToPose(80,-46.5,90,5000);
-    chassis.moveToPose(-80,-46.5,90,150, {.forwards = false});
-    chassis.moveToPose(80,-46.5,90,5000);
-    chassis.moveToPoint(0,-48,8000,{.forwards = false});
+    chassis.moveToPose(-80,-47.5,90,150, {.forwards = false});
+    chassis.moveToPose(80,-47.5,90,5000);
+    chassis.moveToPose(-80,-47.5,90,150, {.forwards = false});
+    chassis.moveToPose(80,-47.5,90,5000);
+    //score in + -
+    chassis.moveToPoint(0,-49,8000,{.forwards = false});
     pros::delay(1000);
     topOuttake();
     pros::delay(5000);
+    //go to + + match loader
     intake();
     chassis.moveToPoint(40,-45,2000);
     chassis.turnToHeading(0,1000);
-    chassis.moveToPoint(40,48,2500);
+    chassis.moveToPoint(40,48,2500, {.maxSpeed = 100});
     chassis.turnToHeading(90, 1000);
     chassis.moveToPoint(70, 48, 3000, {}, false);
+    //match load + + and wiggle
     pros::delay(1000);
-    loaderFork.retract();
     chassis.moveToPoint(-70,48,100,{.forwards = false});
     chassis.moveToPoint(70, 48, 5000, {}, false);
+    loaderFork.retract();
+    //go to - + and score
     chassis.moveToPoint(40,48,2500, {.forwards = false, .minSpeed = 72, .earlyExitRange = 8});
-    chassis.moveToPoint(25,60,1000);
-    chassis.moveToPoint(-48,60,5000);
+    chassis.moveToPoint(25,61,2000);
+    chassis.moveToPoint(-48,61,5000);
     chassis.moveToPoint(-48,48,2000);
-    chassis.moveToPoint(48,48,2000, {.forwards = false}, true);
-    pros::delay(750);
+    chassis.moveToPoint(70,48,2000, {.forwards = false}, true);
+    pros::delay(950);
     topOuttake();
+    //grab - + match loader
     loaderFork.extend();
     pros::delay(7000);
     intake();
-    chassis.moveToPoint(-75,50,2000);
-    chassis.moveToPoint(75,50,150, {.forwards = false});
-    chassis.moveToPoint(-75,50,2000);
-    chassis.moveToPoint(75,50,150, {.forwards = false});
-    chassis.moveToPoint(-75,50,7000);
-    chassis.moveToPoint(75,50,7000, {.forwards = false},true);
-    pros::delay(750);
+    //wiggle
+    chassis.moveToPoint(-75,48,2000);
+    chassis.moveToPoint(75,48,150, {.forwards = false});
+    chassis.moveToPoint(-75,48,2000);
+    chassis.moveToPoint(75,48,150, {.forwards = false});
+    chassis.moveToPoint(-75,48,7000);
+    //score - +
+    chassis.moveToPoint(75,48,7000, {.forwards = false},true);
+    pros::delay(850);
     topOuttake();
     pros::delay(7000);
+    //park and clear parking
     chassis.moveToPoint(-63,21,3000);
-    chassis.moveToPoint(-64,0,2000,{.minSpeed = 127});
+    chassis.moveToPoint(-64,-100,500,{.minSpeed = 127});  
+
+
+
     // right_motors.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
     // left_motors.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
     // // loop forever
