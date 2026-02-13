@@ -49,7 +49,7 @@ const float wDistCenter = 6.625;
 const float negnegLoaderY = -45.5;
 const float posnegLoaderY = -46.5;
 const float posposLoaderY = 48;
-const float negposLoaderY = 48;
+const float negposLoaderY = 47;
 
 double seventy = 70;
 void distanceCode(std::string distance){

@@ -11,6 +11,7 @@
 //#include "robot/monte.hpp"
 #include "robot/skills.h"
 #include <iostream>
+#include <type_traits>
 #include "helpers.hpp"
 #include "robot/auton.hpp"
 
@@ -260,20 +261,20 @@ void opcontrol() {
 
 
 // //PRINT VALUES
-//       chassis.setPose(0,0,0);
-//       while(1){
-//                           // print robot location to the brain screen
-//               pros::lcd::print(0, "X: %f", chassis.getPose().x); // x
-//               pros::lcd::print(1, "Y: %f", chassis.getPose().y); // y
-//               pros::lcd::print(2, "Theta: %f", chassis.getPose().theta); // heading
-//               pros::lcd::print(3, "northPredict: %f", dNorth.get_distance()/25.4+nDistCenter-70); // n
-//               pros::lcd::print(4, "eastPredict: %f", dEast.get_distance()/25.4+eDistCenter-70); // e
-//               pros::lcd::print(7, "sotuhPredict: %f", dSouth.get_distance()/25.4+sDistCenter-70); // s  
-//               pros::lcd::print(5, "nortActual: %f", dNorth.get_distance()/25.4); // n
-//               pros::lcd::print(8, "eastActual: %f", dEast.get_distance()/25.4); // e
-//               pros::lcd::print(6, "southActual: %f", dSouth.get_distance()/25.4); // s
-//               pros::delay(100);
-//       }
+      // chassis.setPose(0,0,0);
+      // while(1){
+      //                     // print robot location to the brain screen
+      //         pros::lcd::print(0, "X: %f", chassis.getPose().x); // x
+      //         pros::lcd::print(1, "Y: %f", chassis.getPose().y); // y
+      //         pros::lcd::print(2, "Theta: %f", chassis.getPose().theta); // heading
+      //         pros::lcd::print(3, "northPredict: %f", dNorth.get_distance()/25.4+nDistCenter-70); // n
+      //         pros::lcd::print(4, "eastPredict: %f", dEast.get_distance()/25.4+eDistCenter-70); // e
+      //         pros::lcd::print(5, "sotuhPredict: %f", 70-dSouth.get_distance()/25.4-sDistCenter); // s  
+      //         pros::lcd::print(9, "nortActual: %f", dNorth.get_distance()/25.4); // n
+      //         pros::lcd::print(3, "eastActual: %f", dEast.get_distance()/25.4); // e
+      //         pros::lcd::print(6, "southActual: %f", dSouth.get_distance()/25.4); // s
+      //         pros::delay(100);
+      // }
 
 
 
@@ -339,11 +340,11 @@ void opcontrol() {
     chassis.turnToHeading(90,1000);
     chassis.setPose(chassis.getPose().x,dEast.get_distance()/25.4+eDistCenter-70,chassis.getPose().theta);
     pros::delay(2000);
+    loaderFork.extend();
     bottomOuttake();
-    pros::delay(300);
+    pros::delay(500);
     topOuttake();
     pros::delay(3000);
-    loaderFork.extend();
     pros::delay(500);
     //grab + - match loader and wiggle
     intake();
@@ -404,32 +405,38 @@ void opcontrol() {
     topOuttake();
     pros::delay(3000);
     intake();
-    pros::lcd::print(0, "X: %f", chassis.getPose().x); // x
-    pros::lcd::print(1, "Y: %f", chassis.getPose().y); // y
-    pros::lcd::print(2, "Theta: %f", chassis.getPose().theta); // heading
-    // //wiggle
-    //   chassis.moveToPoint(-75,48,1700, {.maxSpeed= 50});
-    // for(int move1=0;move1<pibJiggle;move1++){
-    //   chassis.moveToPoint(-75,48,150);
-    //   pros::delay(200);
-    // }
-    // pros::delay(5000);
-    // //score - +
-    // chassis.moveToPoint(75,50,3000, {.forwards = false},true);
-    // pros::delay(1000);
-    // topOuttake();
-    // chassis.turnToHeading(270,1000);
-    // chassis.setPose(chassis.getPose().x,70-dEast.get_distance()/25.4-eDistCenter,chassis.getPose().theta);
-    // pros::delay(2000);
-    // bottomOuttake();
-    // pros::delay(300);
-    // topOuttake();
-    // pros::delay(3000);
-    // loaderFork.retract();
-    // //park and clear parking
-    // chassis.moveToPoint(-63,21,3000);
-    // chassis.moveToPoint(-64,-100,750,{.minSpeed = 127});  
-  
+
+    //wiggle
+      chassis.moveToPoint(-75,negposLoaderY,1700, {.maxSpeed= 50});
+    for(int move1=0;move1<pibJiggle;move1++){
+      chassis.moveToPoint(-75,negposLoaderY,150);
+      pros::delay(200);
+    }
+    pros::delay(5000);
+    //score - +
+    chassis.moveToPoint(75,50,3000, {.forwards = false},true);
+    pros::delay(200);
+    loaderFork.retract();
+    pros::delay(800);
+    topOuttake();
+    chassis.turnToHeading(270,1000);
+    chassis.setPose(chassis.getPose().x,70-dEast.get_distance()/25.4-eDistCenter,chassis.getPose().theta);
+    pros::delay(2000);
+    bottomOuttake();
+    pros::delay(300);
+    topOuttake();
+    pros::delay(3000);
+    loaderFork.retract();
+    //park and clear parking
+    intake();
+    chassis.moveToPose(-65,17,180,3000, {},false);
+    loaderFork.extend();
+    chassis.moveToPoint(-67,-100,1300,{.minSpeed = 127});
+
+
+
+
+
 
 
 // //DRIVE CODE
