@@ -12,11 +12,45 @@
 
 using namespace lemlib;
 
+
+void stallRecoveryTask(void*) {
+  const int commandedVoltage = 12000;   // full power
+  const int stallVelocity = 10;          // rpm threshold
+  const int reverseTime = 300;           // ms
+  const int checkDelay = 20;              // ms
+
+  while (true) {
+    intakeMotor.move_voltage(commandedVoltage);
+
+    double actualVel = fabs(intakeMotor.get_actual_velocity());
+
+    // Check for stall
+    if (actualVel < stallVelocity &&
+        fabs(intakeMotor.get_voltage()) > 1000) {
+
+      // Reverse briefly
+      intakeMotor.move_voltage(-commandedVoltage);
+      pros::delay(reverseTime);
+
+      // Resume forward
+      intakeMotor.move_voltage(commandedVoltage);
+    }
+
+    pros::delay(checkDelay);
+  }
+}
+
 int distint = 0;
 float nDistCenter = 4.25;
-const float sDistCenter = 2.5;
+const float sDistCenter = 1.5;
 const float eDistCenter = 3.25;
 const float wDistCenter = 6.625;
+
+const float negnegLoaderY = -45.5;
+const float posnegLoaderY = -46.5;
+const float posposLoaderY = 48;
+const float negposLoaderY = 48;
+
 double seventy = 70;
 void distanceCode(std::string distance){
 
@@ -36,9 +70,10 @@ void distanceCode(std::string distance){
     chassis.getPose().x,
     dNorth.get_distance()/25.4+nDistCenter-70,
     chassis.getPose().theta);
-    if(chassis.getPose().y<-47){ // Closer to the wall, need to back up
+    chassis.waitUntilDone();
+    if(chassis.getPose().y<negnegLoaderY-.5){ // Closer to the wall, need to back up
       chassis.moveToPoint(-48,-46.5,500,{.forwards = false});
-    }else if(chassis.getPose().y>-46){ // further from the wall, need to go forward
+    }else if(chassis.getPose().y>negnegLoaderY+.5){ // further from the wall, need to go forward
       chassis.moveToPoint(-48,-46.5,500);
     }
     break;
@@ -49,10 +84,13 @@ void distanceCode(std::string distance){
     chassis.getPose().x,
     dSouth.get_distance()/25.4+sDistCenter-70,
     chassis.getPose().theta);
-    if(chassis.getPose().y>-46){ // further from the wall, need to backup
-      chassis.moveToPoint(48,-46.5,500,{.forwards = false});
-    }else if(chassis.getPose().y<-47){ // closer to the wall, need to move forward
-      chassis.moveToPoint(48,-46.5,500);
+    chassis.waitUntilDone();
+    pros::lcd::print(7, "sotuhPredict: %f", dSouth.get_distance()/25.4+sDistCenter-70); // s
+    pros::delay(300);  
+    if(chassis.getPose().y>posnegLoaderY+.5){ // further from the wall, need to backup
+      chassis.moveToPoint(48,posnegLoaderY,500,{.forwards = false});
+    }else if(chassis.getPose().y<posnegLoaderY-.5){ // closer to the wall, need to move forward
+      chassis.moveToPoint(48,posnegLoaderY,500);
     }
     break;
 
@@ -62,10 +100,10 @@ void distanceCode(std::string distance){
     chassis.getPose().x,
     70-dNorth.get_distance()/25.4-nDistCenter,
     chassis.getPose().theta);
-    if(chassis.getPose().y>48.5){ // closer to the wall, need to backup
-      chassis.moveToPoint(48,48,500,{.forwards = false});
-    }else if(chassis.getPose().y<47.5){ // further from the wall, need to move forward
-      chassis.moveToPoint(48,48,500);
+    if(chassis.getPose().y>posposLoaderY+.5){ // closer to the wall, need to backup
+      chassis.moveToPoint(chassis.getPose().x,posposLoaderY,500,{.forwards = false});
+    }else if(chassis.getPose().y<posposLoaderY-.5){ // further from the wall, need to move forward
+      chassis.moveToPoint(chassis.getPose().x,posposLoaderY,500);
     }
     break;
     
@@ -75,10 +113,10 @@ void distanceCode(std::string distance){
     chassis.getPose().x,
     70-dSouth.get_distance()/25.4-sDistCenter,
     chassis.getPose().theta);
-    if(chassis.getPose().y<47.5){ // further from the wall, need to back up
-      chassis.moveToPoint(-48,48,500,{.forwards = false});
-    }else if(chassis.getPose().y>48.5){ // closer to the wall, need to move forward
-      chassis.moveToPoint(-48,48,500);
+    if(chassis.getPose().y<negposLoaderY-.5){ // further from the wall, need to back up
+      chassis.moveToPoint(-48,negposLoaderY,500,{.forwards = false});
+    }else if(chassis.getPose().y>negposLoaderY+.5){ // closer to the wall, need to move forward
+      chassis.moveToPoint(-48,negposLoaderY,500);
     }
     break;
     }

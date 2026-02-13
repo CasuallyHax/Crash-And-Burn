@@ -27,7 +27,7 @@ lemlib::Drivetrain drivetrain(&left_motors, // left motor group
 // create an imu on port 10
 pros::Imu imu(17);
 
-pros::Rotation vertical_tracker(16);
+pros::Rotation vertical_tracker(8);
 // vertical tracking wheel
 lemlib::TrackingWheel vertical_tracking_wheel(&vertical_tracker, lemlib::Omniwheel::NEW_2*.925, 0);
 
@@ -74,8 +74,8 @@ lemlib::Chassis chassis(drivetrain, // drivetrain settings
 
 pros::Distance dNorth(13);
 pros::Distance dEast(14);
-pros::Distance dSouth(15);
-pros::Distance dWest(12);
+pros::Distance dSouth(12);
+pros::Distance dWest(15);
 
 //Auton selector
 int auton = 0;

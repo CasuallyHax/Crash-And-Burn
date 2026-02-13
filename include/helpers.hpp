@@ -5,7 +5,7 @@ void intake();
 void topOuttake();
 void midOuttake();
 void bottomOuttake();
-
+void intakeStop();
 
 void colorSorting(std::string goodColor);
 

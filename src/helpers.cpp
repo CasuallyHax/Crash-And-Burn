@@ -21,6 +21,10 @@ void bottomOuttake(){
     intakeMotor.move(127*.8);
     hoodMotor.move(-127);
 }
+void intakeStop(){
+   intakeMotor.move(0);
+    hoodMotor.move(0); 
+}
 
 void controllerCode(){
     
@@ -32,7 +36,7 @@ void controllerCode(){
         intake();
     }
 
-    if(controller.get_digital_new_release(pros::E_CONTROLLER_DIGITAL_L1)||controller.get_digital_new_release(pros::E_CONTROLLER_DIGITAL_L2)||controller.get_digital_new_release(pros::E_CONTROLLER_DIGITAL_R1)||controller.get_digital_new_release(pros::E_CONTROLLER_DIGITAL_DOWN)){
+    if(controller.get_digital_new_release(pros::E_CONTROLLER_DIGITAL_L1)||controller.get_digital_new_release(pros::E_CONTROLLER_DIGITAL_L2)||controller.get_digital_new_release(pros::E_CONTROLLER_DIGITAL_R1)||controller.get_digital_new_release(pros::E_CONTROLLER_DIGITAL_RIGHT)){
         IntakeMode = 4;
     }
 
@@ -59,7 +63,7 @@ void controllerCode(){
     }
 
     //Mid
-    if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN)){
+    if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_RIGHT)){
         IntakeMode = 5;
     }
     if(IntakeMode == 5){
@@ -72,7 +76,7 @@ void controllerCode(){
     }
 
     //LoaderFork
-    if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_B)){
+    if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)){
         loaderFork.toggle();
     }
 

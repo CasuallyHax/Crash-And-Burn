@@ -1,6 +1,8 @@
 #include "globals.hpp"
 #pragma once
 
+void stallRecoveryTask(void*);
+
 extern int distint;
 extern float nDistCenter;
 extern const float sDistCenter;
@@ -22,3 +24,8 @@ void leftQuick();
 void soloAWP();
 void drive24();
 void turn90();
+
+extern const float negnegLoaderY;
+extern const float posnegLoaderY;
+extern const float posposLoaderY;
+extern const float negposLoaderY;
