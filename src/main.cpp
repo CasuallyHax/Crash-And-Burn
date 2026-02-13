@@ -15,35 +15,54 @@
 #include "helpers.hpp"
 #include "robot/auton.hpp"
 
+// ========== AUTON SELECTOR ==========
 
-void on_left() {
-  auton--;
-  if (auton < 0) auton = AUTON_COUNT - 1;
-  pros::lcd::set_text(1, autonNames[auton]);
-}
-
-void on_right() {
-  auton++;
-  if (auton >= AUTON_COUNT) auton = 0;
-  pros::lcd::set_text(1, autonNames[auton]);
-}
-
-void on_center() {
-  pros::lcd::set_text(2, "Selected!");
-}
+// Array of autonomous routine names (for display only)
+const char* autons[] = {
+    "Right Full",
+    "Right 7 Long", 
+    "Right Quick",
+    "Left Full",
+    "Left 7 Long",
+    "Left Quick",
+    "AWP",
+    "Skills"
+};
+int autonIndex = 0;
+const int numAutons = 8; // Number of auton routines
 
 
 void initialize() {
     pros::lcd::initialize();
 
     chassis.calibrate();
-  pros::lcd::set_text(0, "Auton Selector");
-  pros::lcd::set_text(1, autonNames[auton]);
-
-  pros::lcd::register_btn0_cb(on_left);    // left
-  pros::lcd::register_btn1_cb(on_center);  // center
-  pros::lcd::register_btn2_cb(on_right);   // right
+    // Left button - cycle backward
+    pros::lcd::register_btn0_cb([]() {
+        autonIndex--;
+        if (autonIndex < 0) {
+            autonIndex = numAutons - 1; // Wrap around
+        }
+        pros::lcd::print(2, "Selected: %s", autons[autonIndex]);
+    });
+    
+    // Center button - could be used to confirm or just display
+    pros::lcd::register_btn1_cb([]() {
+        pros::lcd::print(2, "Selected: %s", autons[autonIndex]);
+    });
+    
+    // Right button - cycle forward
+    pros::lcd::register_btn2_cb([]() {
+        autonIndex++;
+        if (autonIndex >= numAutons) {
+            autonIndex = 0; // Wrap around
+        }
+        pros::lcd::print(2, "Selected: %s", autons[autonIndex]);
+    });
+    
+    // Display initial selection
+    pros::lcd::print(2, "Selected: %s", autons[autonIndex]);
 }
+
 /**
  * Runs while the robot is in the disabled state of Field Management System or
  * the VEX Competition Switch, following either autonomous or opcontrol. When
@@ -73,76 +92,64 @@ void competition_initialize() {}
  * will be stopped. Re-enabling the robot will restart the task, not re-start it
  * from where it left off.
  */
-
- 
+const int pimpJiggle = 15; 
 void autonomous() {
-  // chassis.setPose(0,0,0);
-  // chassis.moveToPoint(0,24,1000);
-  // chassis.setPose(-48,12,0);
-  // //grab balls from loader
-  // chassis.moveToPoint(-48, 48, 3000);
-  // chassis.turnToHeading(270,2000);
-  // loaderFork.extend();
-  // intake();
-  // chassis.moveToPoint(-70,47.5,4500,{},true);
-  // //tune delay to only grab 3
-  // pros::delay(4500);
-  // //score 4 in long
-  // chassis.moveToPoint(70,47.5,1000,{.forwards = false},false);
-  // topOuttake();
-  // pros::delay(3000);
-  // loaderFork.retract();
-  // intake();
-  // chassis.moveToPoint(-48,48,400);
-  // chassis.turnToHeading(135,250);
-  // chassis.moveToPoint(-17,17,700,{},true);
-  // //tune delay
-  // pros::delay(800);
-  // loaderFork.extend();
-  // pros::delay(300);
-  // //turn around to mid score 3
-  // chassis.turnToHeading(315,400);
-  // chassis.moveToPoint(-10,8.5,1000, {.forwards = false, .maxSpeed = 100}, false);
-  // chassis.turnToHeading(315,400);  
-  // midOuttake();
-  // pros::delay(1500);
-  // chassis.moveToPoint(-90,90,50, {}, false); 
-  // chassis.moveToPoint(-9,9,1000, {.forwards = false}, false); 
-  // //go to defend
-  // loaderFork.retract();
-  // chassis.moveToPose(-27.5,36,270, 750, {.minSpeed = 72});
-  // Descore.retract();
-  // left_motors.set_brake_mode_all(pros::MotorBrake::hold);
-  // right_motors.set_brake_mode_all(pros::MotorBrake::hold);
-  // chassis.moveToPoint(-11,36,400, {.forwards = false});
+  chassis.setPose(-48,-12,180);
+      Descore.extend();
+    chassis.setPose(-48,-12,180);
+    chassis.moveToPoint(-48, -46, 3000,{},false);
+    chassis.waitUntilDone();
+    pros::delay(200);
+    distanceCode("--");
+    pros::delay(100);
+    chassis.turnToHeading(270,2000);
+    //go to loader
+    loaderFork.extend();
+    intake();
+    //wiggle in - - match loader
+    pros::delay(125);
+    for(int move1=0;move1<pimpJiggle;move1++){
+      chassis.moveToPoint(-75,-46.5,150);
+    pros::delay(200);
+    }
+  //grab loader and score 4 in long
+  chassis.moveToPose(-48, -49,270, 3000);
+  chassis.turnToHeading(270,2000);
+  //go to loader
+  loaderFork.extend();
+  intake();
+  pros::delay(3000);
+  //TODO: tune timing
+  chassis.moveToPoint(-78,-48,2000, {.forwards = false}, true);
+  pros::delay(750);
+  //score long
+  topOuttake();
+// switch(autonIndex) {
+//         case 0: // Right Full
+//           rightFull();
+//             break;
+//         case 1: // Right 7 Long
 
-
-//   switch (auton) {
-//     case 0:
-//       rightFull();
-//       break;
-//     case 1:
-//       leftFull();
-//       break;
-//     case 2:
-//       rightQuick();
-//       break;
-//     case 3:
-//       leftQuick();
-//       break;
-//     case 4:
-//       soloAWP();
-//       break;
-//     case 5:
-//       skills1();
-//       break;
-//     case 6:
-//       drive24();
-//       break;
-//     case 7:
-//       turn90();
-//       break;
-// }
+//             break;
+//         case 2: // Right Quick
+//           rightQuick();
+//             break;
+//         case 3: // Left Full
+//           leftFull();
+//             break;
+//         case 4: // Left 7 Long
+          
+//             break;
+//         case 5: // Left Quick
+//           leftQuick();
+//             break;
+//         case 6: // AWP
+//           soloAWP();
+//             break;
+//         case 7: // Skills
+//           skills1();
+//             break;
+//     }
 
 }
 
@@ -294,6 +301,7 @@ void opcontrol() {
 
 
 //AUTON TESTING
+//TODO: shorten timings
 //TODO: move this code to auton after testing
     //Start touching red park
     right_motors.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
@@ -304,15 +312,13 @@ void opcontrol() {
     chassis.waitUntilDone();
     pros::delay(200);
     distanceCode("--");
-    pros::delay(2000);
-    pros::lcd::print(0, "Done");
+    pros::delay(100);
     chassis.turnToHeading(270,2000);
     //go to loader
     loaderFork.extend();
     intake();
-    pros::delay(500);
     //wiggle in - - match loader
-    pros::delay(1000);
+    pros::delay(125);
     for(int move1=0;move1<pibJiggle;move1++){
       chassis.moveToPoint(-75,-46.5,150);
     pros::delay(200);
@@ -328,24 +334,18 @@ void opcontrol() {
     chassis.swingToHeading(0,lemlib::DriveSide::LEFT,500);
     pros::delay(200);
     chassis.moveToPose(chassis.getPose().x,-48,0,1000);
-    // chassis.waitUntilDone();
-    // pros::delay(500);
-    // distanceCode("+-");
-    // pros::delay(2000);
     chassis.turnToHeading(90,500);
     chassis.moveToPoint(0,-48,3000,{.forwards = false}, true);
-    pros::delay(1000);
     pros::delay(1000);
     topOuttake();
     chassis.turnToHeading(90,1000);
     chassis.setPose(chassis.getPose().x,dEast.get_distance()/25.4+eDistCenter-70,chassis.getPose().theta);
-    pros::delay(2000);
+    pros::delay(750);
     loaderFork.extend();
     bottomOuttake();
     pros::delay(500);
     topOuttake();
-    pros::delay(3000);
-    pros::delay(500);
+    pros::delay(1500);
     //grab + - match loader and wiggle
     intake();
     chassis.moveToPoint(80,posnegLoaderY,1700, {.maxSpeed= 40});  // match load +- quadrant
@@ -359,11 +359,11 @@ void opcontrol() {
     topOuttake();
     chassis.turnToHeading(90,1000);
     chassis.setPose(chassis.getPose().x,dEast.get_distance()/25.4+eDistCenter-70,chassis.getPose().theta);
-    pros::delay(2000);
+    pros::delay(750);
     bottomOuttake();
-    pros::delay(300);
+    pros::delay(500);
     topOuttake();
-    pros::delay(3000);
+    pros::delay(1500);
     //go to + + match loader
     intake();
     chassis.moveToPoint(35,-45,2000);
@@ -372,7 +372,7 @@ void opcontrol() {
     chassis.waitUntilDone();
     pros::delay(200);
     distanceCode("++");
-    pros::delay(2000);  // TODO: shorten after testing
+    pros::delay(100);
     chassis.turnToHeading(90, 1000);
     //match load + + and wiggle
       chassis.moveToPoint(70,48,1700, {.maxSpeed= 50});
@@ -391,19 +391,19 @@ void opcontrol() {
     chassis.waitUntilDone();
     pros::delay(200);
     distanceCode("-+");
-    pros::delay(2000);
+    pros::delay(200);
     chassis.turnToHeading(270,500);
     chassis.moveToPoint(0,48,2000, {.forwards = false}, true);
     pros::delay(1000);
     topOuttake();
     chassis.turnToHeading(270,1000);
     chassis.setPose(chassis.getPose().x,70-dEast.get_distance()/25.4-eDistCenter,chassis.getPose().theta);
-    pros::delay(2000);
+    pros::delay(1000);
     bottomOuttake();
     loaderFork.extend();
     pros::delay(300);
     topOuttake();
-    pros::delay(3000);
+    pros::delay(1500);
     intake();
 
     //wiggle
@@ -412,7 +412,7 @@ void opcontrol() {
       chassis.moveToPoint(-75,negposLoaderY,150);
       pros::delay(200);
     }
-    pros::delay(5000);
+    pros::delay(500);
     //score - +
     chassis.moveToPoint(75,50,3000, {.forwards = false},true);
     pros::delay(200);
@@ -421,11 +421,11 @@ void opcontrol() {
     topOuttake();
     chassis.turnToHeading(270,1000);
     chassis.setPose(chassis.getPose().x,70-dEast.get_distance()/25.4-eDistCenter,chassis.getPose().theta);
-    pros::delay(2000);
+    pros::delay(1000);
     bottomOuttake();
     pros::delay(300);
     topOuttake();
-    pros::delay(3000);
+    pros::delay(1500);
     loaderFork.retract();
     //park and clear parking
     intake();
