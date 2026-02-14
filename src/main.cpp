@@ -166,7 +166,7 @@ void autonomous() {
  * operator control task will be stopped. Re-enabling the robot will restart the
  * task, not resume it from where it left off.
  */
-const int pibJiggle = 30;
+const int pibJiggle = 20;
 void opcontrol() {
 
 //  pros::Task stallTask(stallRecoveryTask);
@@ -312,7 +312,7 @@ void opcontrol() {
     chassis.waitUntilDone();
     pros::delay(200);
     distanceCode("--");
-    pros::delay(100);
+    pros::delay(50);
     chassis.turnToHeading(270,2000);
     //go to loader
     loaderFork.extend();
@@ -325,30 +325,31 @@ void opcontrol() {
     }
     intakeStop();
     //go to + - to score
-    chassis.moveToPoint(-48,-50,3000, {.forwards = false, .minSpeed = 72, .earlyExitRange = 8});
+    chassis.moveToPoint(-48,-50,3000, {.forwards = false, .minSpeed = 72, .earlyExitRange = 9});
     loaderFork.retract();
     chassis.moveToPoint(-27.5, -60, 3000, {.forwards = false});
     chassis.moveToPoint(45, -60, 4000, {.forwards = false});
     chassis.moveToPoint(48,-48,500);
-    chassis.moveToPoint(48,-100,2000,{.forwards = false, .maxSpeed = 75});
-    chassis.swingToHeading(0,lemlib::DriveSide::LEFT,500);
-    pros::delay(200);
-    chassis.moveToPose(chassis.getPose().x,-48,0,1000);
+    // //align against wall
+    // chassis.moveToPoint(48,-100,300,{.forwards = false, .maxSpeed = 75});
+    // chassis.swingToHeading(0,lemlib::DriveSide::LEFT,100);
+    // pros::delay(100);
     chassis.turnToHeading(90,500);
+    //go top score
     chassis.moveToPoint(0,-48,3000,{.forwards = false}, true);
     pros::delay(1000);
     topOuttake();
-    chassis.turnToHeading(90,1000);
+    chassis.turnToHeading(90,1000,{.minSpeed = 40, .earlyExitRange = 10});
     chassis.setPose(chassis.getPose().x,dEast.get_distance()/25.4+eDistCenter-70,chassis.getPose().theta);
-    pros::delay(750);
+    pros::delay(500);
     loaderFork.extend();
     bottomOuttake();
     pros::delay(500);
     topOuttake();
-    pros::delay(1500);
+    pros::delay(1300);
     //grab + - match loader and wiggle
     intake();
-    chassis.moveToPoint(80,posnegLoaderY,1700, {.maxSpeed= 40});  // match load +- quadrant
+    chassis.moveToPoint(80,posnegLoaderY,1700, {.maxSpeed= 55});  // match load +- quadrant
     for(int move1=0;move1<pibJiggle;move1++){
       chassis.moveToPoint(80,posnegLoaderY,150);
     pros::delay(200);
@@ -359,15 +360,15 @@ void opcontrol() {
     topOuttake();
     chassis.turnToHeading(90,1000);
     chassis.setPose(chassis.getPose().x,dEast.get_distance()/25.4+eDistCenter-70,chassis.getPose().theta);
-    pros::delay(750);
+    pros::delay(300);
     bottomOuttake();
     pros::delay(500);
     topOuttake();
-    pros::delay(1500);
+    pros::delay(1300);
     //go to + + match loader
     intake();
     chassis.moveToPoint(35,-45,2000);
-    chassis.moveToPoint(35,48,2000);
+    chassis.moveToPoint(35,48,2000,{.minSpeed = 72, .earlyExitRange = 9});
     chassis.turnToHeading(0,1000);
     chassis.waitUntilDone();
     pros::delay(200);
@@ -405,7 +406,6 @@ void opcontrol() {
     topOuttake();
     pros::delay(1500);
     intake();
-
     //wiggle
       chassis.moveToPoint(-75,negposLoaderY,1700, {.maxSpeed= 50});
     for(int move1=0;move1<pibJiggle;move1++){
