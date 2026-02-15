@@ -94,62 +94,37 @@ void competition_initialize() {}
  */
 const int pimpJiggle = 15; 
 void autonomous() {
-  chassis.setPose(-48,-12,180);
-      Descore.extend();
-    chassis.setPose(-48,-12,180);
-    chassis.moveToPoint(-48, -46, 3000,{},false);
-    chassis.waitUntilDone();
-    pros::delay(200);
-    distanceCode("--");
-    pros::delay(100);
-    chassis.turnToHeading(270,2000);
-    //go to loader
-    loaderFork.extend();
-    intake();
-    //wiggle in - - match loader
-    pros::delay(125);
-    for(int move1=0;move1<pimpJiggle;move1++){
-      chassis.moveToPoint(-75,-46.5,150);
-    pros::delay(200);
-    }
-  //grab loader and score 4 in long
-  chassis.moveToPose(-48, -49,270, 3000);
-  chassis.turnToHeading(270,2000);
-  //go to loader
-  loaderFork.extend();
-  intake();
-  pros::delay(3000);
-  //TODO: tune timing
-  chassis.moveToPoint(-78,-48,2000, {.forwards = false}, true);
-  pros::delay(750);
-  //score long
-  topOuttake();
-// switch(autonIndex) {
-//         case 0: // Right Full
-//           rightFull();
-//             break;
-//         case 1: // Right 7 Long
 
-//             break;
-//         case 2: // Right Quick
-//           rightQuick();
-//             break;
-//         case 3: // Left Full
-//           leftFull();
-//             break;
-//         case 4: // Left 7 Long
-          
-//             break;
-//         case 5: // Left Quick
-//           leftQuick();
-//             break;
-//         case 6: // AWP
-//           soloAWP();
-//             break;
-//         case 7: // Skills
-//           skills1();
-//             break;
-//     }
+switch(autonIndex) {
+        case 0: // Right Full
+          rightFull();
+            break;
+
+        case 1: // Right 7 Long
+          right7();
+            break;
+        case 2: // Right Quick
+          rightQuick();
+            break;
+
+        case 3: // Left Full
+          leftFull();
+            break;
+
+        case 4: // Left 7 Long
+          left7();
+            break;
+
+        case 5: // Left Quick
+          leftQuick();
+            break;
+        case 6: // AWP
+          soloAWP();
+            break;
+        case 7: // Skills
+          skills1();
+            break;
+    }
 
 }
 
@@ -166,7 +141,7 @@ void autonomous() {
  * operator control task will be stopped. Re-enabling the robot will restart the
  * task, not resume it from where it left off.
  */
-const int pibJiggle = 20;
+
 void opcontrol() {
 
 //  pros::Task stallTask(stallRecoveryTask);
@@ -274,7 +249,7 @@ void opcontrol() {
       //         pros::lcd::print(0, "X: %f", chassis.getPose().x); // x
       //         pros::lcd::print(1, "Y: %f", chassis.getPose().y); // y
       //         pros::lcd::print(2, "Theta: %f", chassis.getPose().theta); // heading
-      //         pros::lcd::print(3, "northPredict: %f", dNorth.get_distance()/25.4+nDistCenter-70); // n
+              pros::lcd::print(3, "westPredict: %f", dWest.get_distance()/25.4+wDistCenter-70); // w
       //         pros::lcd::print(4, "eastPredict: %f", dEast.get_distance()/25.4+eDistCenter-70); // e
       //         pros::lcd::print(5, "sotuhPredict: %f", 70-dSouth.get_distance()/25.4-sDistCenter); // s  
       //         pros::lcd::print(9, "nortActual: %f", dNorth.get_distance()/25.4); // n
@@ -301,137 +276,6 @@ void opcontrol() {
 
 
 //AUTON TESTING
-//TODO: shorten timings
-//TODO: move this code to auton after testing
-    //Start touching red park
-    right_motors.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
-    left_motors.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
-    Descore.extend();
-    chassis.setPose(-48,-12,180);
-    chassis.moveToPoint(-48, -46, 3000,{},false);
-    chassis.waitUntilDone();
-    pros::delay(200);
-    distanceCode("--");
-    pros::delay(50);
-    chassis.turnToHeading(270,2000);
-    //go to loader
-    loaderFork.extend();
-    intake();
-    //wiggle in - - match loader
-    pros::delay(125);
-    for(int move1=0;move1<pibJiggle;move1++){
-      chassis.moveToPoint(-75,-46.5,150);
-    pros::delay(200);
-    }
-    intakeStop();
-    //go to + - to score
-    chassis.moveToPoint(-48,-50,3000, {.forwards = false, .minSpeed = 72, .earlyExitRange = 9});
-    loaderFork.retract();
-    chassis.moveToPoint(-27.5, -60, 3000, {.forwards = false});
-    chassis.moveToPoint(45, -60, 4000, {.forwards = false});
-    chassis.moveToPoint(48,-48,500);
-    // //align against wall
-    // chassis.moveToPoint(48,-100,300,{.forwards = false, .maxSpeed = 75});
-    // chassis.swingToHeading(0,lemlib::DriveSide::LEFT,100);
-    // pros::delay(100);
-    chassis.turnToHeading(90,500);
-    //go top score
-    chassis.moveToPoint(0,-48,3000,{.forwards = false}, true);
-    pros::delay(1000);
-    topOuttake();
-    chassis.turnToHeading(90,1000,{.minSpeed = 40, .earlyExitRange = 10});
-    chassis.setPose(chassis.getPose().x,dEast.get_distance()/25.4+eDistCenter-70,chassis.getPose().theta);
-    pros::delay(500);
-    loaderFork.extend();
-    bottomOuttake();
-    pros::delay(500);
-    topOuttake();
-    pros::delay(1300);
-    //grab + - match loader and wiggle
-    intake();
-    chassis.moveToPoint(80,posnegLoaderY,1700, {.maxSpeed= 55});  // match load +- quadrant
-    for(int move1=0;move1<pibJiggle;move1++){
-      chassis.moveToPoint(80,posnegLoaderY,150);
-    pros::delay(200);
-    }
-    //score in + -
-    chassis.moveToPoint(0,-49,3000,{.forwards = false});
-    pros::delay(1000);
-    topOuttake();
-    chassis.turnToHeading(90,1000);
-    chassis.setPose(chassis.getPose().x,dEast.get_distance()/25.4+eDistCenter-70,chassis.getPose().theta);
-    pros::delay(300);
-    bottomOuttake();
-    pros::delay(500);
-    topOuttake();
-    pros::delay(1300);
-    //go to + + match loader
-    intake();
-    chassis.moveToPoint(35,-45,2000);
-    chassis.moveToPoint(35,48,2000,{.minSpeed = 72, .earlyExitRange = 9});
-    chassis.turnToHeading(0,1000);
-    chassis.waitUntilDone();
-    pros::delay(200);
-    distanceCode("++");
-    pros::delay(100);
-    chassis.turnToHeading(90, 1000);
-    //match load + + and wiggle
-      chassis.moveToPoint(70,48,1700, {.maxSpeed= 50});
-    for(int move1=0;move1<pibJiggle;move1++){
-      chassis.moveToPoint(70,48,150);
-      pros::delay(200);
-    }
-    //go to - + and score
-    chassis.moveToPoint(40,48,2500, {.forwards = false, .minSpeed = 72, .earlyExitRange = 8});
-    loaderFork.retract();
-    chassis.moveToPoint(25,61,2000);
-    chassis.moveToPoint(-48,61,5000);
-    chassis.turnToHeading(180,500);
-    chassis.moveToPoint(-48,48,750);
-    chassis.turnToHeading(180,500);
-    chassis.waitUntilDone();
-    pros::delay(200);
-    distanceCode("-+");
-    pros::delay(200);
-    chassis.turnToHeading(270,500);
-    chassis.moveToPoint(0,48,2000, {.forwards = false}, true);
-    pros::delay(1000);
-    topOuttake();
-    chassis.turnToHeading(270,1000);
-    chassis.setPose(chassis.getPose().x,70-dEast.get_distance()/25.4-eDistCenter,chassis.getPose().theta);
-    pros::delay(1000);
-    bottomOuttake();
-    loaderFork.extend();
-    pros::delay(300);
-    topOuttake();
-    pros::delay(1500);
-    intake();
-    //wiggle
-      chassis.moveToPoint(-75,negposLoaderY,1700, {.maxSpeed= 50});
-    for(int move1=0;move1<pibJiggle;move1++){
-      chassis.moveToPoint(-75,negposLoaderY,150);
-      pros::delay(200);
-    }
-    pros::delay(500);
-    //score - +
-    chassis.moveToPoint(75,50,3000, {.forwards = false},true);
-    pros::delay(200);
-    loaderFork.retract();
-    pros::delay(800);
-    topOuttake();
-    chassis.turnToHeading(270,1000);
-    chassis.setPose(chassis.getPose().x,70-dEast.get_distance()/25.4-eDistCenter,chassis.getPose().theta);
-    pros::delay(1000);
-    bottomOuttake();
-    pros::delay(300);
-    topOuttake();
-    pros::delay(1500);
-    loaderFork.retract();
-    //park and clear parking
-    intake();
-    chassis.moveToPose(-65,17,180,3000, {},false);
-    loaderFork.extend();
-    chassis.moveToPoint(-67,-100,1300,{.minSpeed = 127});
 
 
 

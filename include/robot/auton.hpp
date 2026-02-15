@@ -22,6 +22,8 @@ void leftFull();
 void rightQuick();
 void leftQuick();
 void soloAWP();
+void left7();
+void right7();
 void drive24();
 void turn90();
 

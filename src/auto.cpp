@@ -44,10 +44,10 @@ int distint = 0;
 float nDistCenter = 4.25;
 const float sDistCenter = 1.5;
 const float eDistCenter = 3.25;
-const float wDistCenter = 6.625;
+const float wDistCenter = 4.495;
 
 const float negnegLoaderY = -45.5;
-const float posnegLoaderY = -46.5;
+const float posnegLoaderY = -46;
 const float posposLoaderY = 48;
 const float negposLoaderY = 48;
 
@@ -65,11 +65,13 @@ void distanceCode(std::string distance){
     distint = 4;}
   switch(distint){
     case 1:
-    //--
+    // - - quadrant
+    // set position to actual position measured by distance sensors 
     chassis.setPose(
-    chassis.getPose().x,
-    dNorth.get_distance()/25.4+nDistCenter-70,
-    chassis.getPose().theta);
+    chassis.getPose().x, // use current x value, as we need to only adjust for the y of the match loader
+    //convert to in, offset the the distance sensor to center of robot and calculate how far from the wall
+    dNorth.get_distance()/25.4+nDistCenter-70, 
+    chassis.getPose().theta); // keep the same theta
     chassis.waitUntilDone();
     if(chassis.getPose().y<negnegLoaderY-.5){ // Closer to the wall, need to back up
       chassis.moveToPoint(-48,-46.5,500,{.forwards = false});
@@ -122,11 +124,13 @@ void distanceCode(std::string distance){
     }
   }
   
-const int pibJiggle = 30;
+const int pibJiggle = 25;
 
 //match autons
 void skills1(){
-        //Start touching red park
+//TODO: shorten timings
+//TODO: move this code to auton after testing
+    //Start touching red park
     right_motors.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
     left_motors.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
     Descore.extend();
@@ -135,7 +139,7 @@ void skills1(){
     chassis.waitUntilDone();
     pros::delay(200);
     distanceCode("--");
-    pros::delay(100);
+    pros::delay(50);
     chassis.turnToHeading(270,2000);
     //go to loader
     loaderFork.extend();
@@ -144,53 +148,54 @@ void skills1(){
     pros::delay(125);
     for(int move1=0;move1<pibJiggle;move1++){
       chassis.moveToPoint(-75,-46.5,150);
-    pros::delay(200);
+      pros::delay(200);
     }
     intakeStop();
     //go to + - to score
     chassis.moveToPoint(-48,-50,3000, {.forwards = false, .minSpeed = 72, .earlyExitRange = 8});
     loaderFork.retract();
-    chassis.moveToPoint(-27.5, -60, 3000, {.forwards = false});
-    chassis.moveToPoint(45, -60, 4000, {.forwards = false});
-    chassis.moveToPoint(48,-48,500);
-    chassis.moveToPoint(48,-100,2000,{.forwards = false, .maxSpeed = 75});
-    chassis.swingToHeading(0,lemlib::DriveSide::LEFT,500);
-    pros::delay(200);
-    chassis.moveToPose(chassis.getPose().x,-48,0,1000);
-    chassis.turnToHeading(90,500);
+    chassis.moveToPoint(-27.5, -60, 3000, {.forwards = false, .minSpeed = 72, .earlyExitRange = 8});
+    chassis.moveToPoint(25, -60, 4000, {.forwards = false});
+    chassis.moveToPoint(48,-44,1500, {.forwards = false});
+    // //align against wall
+    // chassis.moveToPoint(48,-100,300,{.forwards = false, .maxSpeed = 75});
+    // chassis.swingToHeading(0,lemlib::DriveSide::LEFT,100);
+    // pros::delay(100);
+    chassis.turnToHeading(90,750);
+    //go + - score
     chassis.moveToPoint(0,-48,3000,{.forwards = false}, true);
     pros::delay(1000);
     topOuttake();
-    chassis.turnToHeading(90,1000);
+    chassis.turnToHeading(90,1000,{.minSpeed = 40, .earlyExitRange = 10});
     chassis.setPose(chassis.getPose().x,dEast.get_distance()/25.4+eDistCenter-70,chassis.getPose().theta);
-    pros::delay(750);
+    pros::delay(650);
     loaderFork.extend();
     bottomOuttake();
     pros::delay(500);
     topOuttake();
-    pros::delay(1500);
+    pros::delay(400);
     //grab + - match loader and wiggle
     intake();
-    chassis.moveToPoint(80,posnegLoaderY,1700, {.maxSpeed= 40});  // match load +- quadrant
+    chassis.moveToPoint(48,posnegLoaderY,1700, {.maxSpeed= 55,.minSpeed = 40,.earlyExitRange = 5});  // match load +- quadrant
     for(int move1=0;move1<pibJiggle;move1++){
       chassis.moveToPoint(80,posnegLoaderY,150);
-    pros::delay(200);
+      pros::delay(200);
     }
     //score in + -
-    chassis.moveToPoint(0,-49,3000,{.forwards = false});
+    chassis.moveToPoint(0,-50.5,3000,{.forwards = false});
     pros::delay(1000);
     topOuttake();
     chassis.turnToHeading(90,1000);
     chassis.setPose(chassis.getPose().x,dEast.get_distance()/25.4+eDistCenter-70,chassis.getPose().theta);
-    pros::delay(750);
+    pros::delay(650);
     bottomOuttake();
     pros::delay(500);
     topOuttake();
-    pros::delay(1500);
+    pros::delay(300);
     //go to + + match loader
     intake();
     chassis.moveToPoint(35,-45,2000);
-    chassis.moveToPoint(35,48,2000);
+    chassis.moveToPoint(35,48,2000,{.minSpeed = 72, .earlyExitRange = 9});
     chassis.turnToHeading(0,1000);
     chassis.waitUntilDone();
     pros::delay(200);
@@ -198,7 +203,7 @@ void skills1(){
     pros::delay(100);
     chassis.turnToHeading(90, 1000);
     //match load + + and wiggle
-      chassis.moveToPoint(70,48,1700, {.maxSpeed= 50});
+    chassis.moveToPoint(48,posposLoaderY,1700, {.maxSpeed= 85,.minSpeed = 40,.earlyExitRange = 5}); // go forwards a little, and then jiggle forwards
     for(int move1=0;move1<pibJiggle;move1++){
       chassis.moveToPoint(70,48,150);
       pros::delay(200);
@@ -221,16 +226,15 @@ void skills1(){
     topOuttake();
     chassis.turnToHeading(270,1000);
     chassis.setPose(chassis.getPose().x,70-dEast.get_distance()/25.4-eDistCenter,chassis.getPose().theta);
-    pros::delay(1000);
+    pros::delay(600);
     bottomOuttake();
     loaderFork.extend();
     pros::delay(300);
     topOuttake();
-    pros::delay(1500);
+    pros::delay(200);
     intake();
-
     //wiggle
-      chassis.moveToPoint(-75,negposLoaderY,1700, {.maxSpeed= 50});
+    chassis.moveToPoint(-48,negposLoaderY,1700, {.maxSpeed= 85,.minSpeed = 40,.earlyExitRange = 5});
     for(int move1=0;move1<pibJiggle;move1++){
       chassis.moveToPoint(-75,negposLoaderY,150);
       pros::delay(200);
@@ -244,21 +248,20 @@ void skills1(){
     topOuttake();
     chassis.turnToHeading(270,1000);
     chassis.setPose(chassis.getPose().x,70-dEast.get_distance()/25.4-eDistCenter,chassis.getPose().theta);
-    pros::delay(1000);
+    pros::delay(700);
     bottomOuttake();
     pros::delay(300);
     topOuttake();
-    pros::delay(1500);
+    pros::delay(200);
     loaderFork.retract();
     //park and clear parking
     intake();
     chassis.moveToPose(-65,17,180,3000, {},false);
     loaderFork.extend();
-    chassis.moveToPoint(-67,-100,1300,{.minSpeed = 127});
-
+    chassis.moveToPoint(-68,0,1300,{.minSpeed = 127});
 }
 
-const int pimpJiggle = 15;
+const int pimpJiggle = 14;
 
 //match autons
 void rightFull(){
@@ -348,38 +351,37 @@ void leftFull(){
   right_motors.set_brake_mode_all(pros::MotorBrake::hold);
   chassis.moveToPoint(-11,36,400, {.maxSpeed = 45});
 }
-
+const int pimpJiggle1 = 11;
 void rightQuick(){
-right_motors.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
-left_motors.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
-    Descore.extend();
     chassis.setPose(-48,-12,180);
-    chassis.moveToPoint(-48, -46, 3000,{},false);
+    chassis.moveToPoint(-48,-46.5,1500);
+    chassis.turnToHeading(180,2000);
     chassis.waitUntilDone();
-    pros::delay(200);
+    pros::delay(50);
     distanceCode("--");
-    pros::delay(100);
-    chassis.turnToHeading(270,2000);
-    //go to loader
-    loaderFork.extend();
+    chassis.turnToHeading(270,500);
     intake();
+    loaderFork.extend();
     //wiggle in - - match loader
     pros::delay(125);
-    for(int move1=0;move1<pimpJiggle;move1++){
-      chassis.moveToPoint(-75,-46.5,150);
+    for(int move1=0;move1<pimpJiggle1;move1++){
+      chassis.moveToPoint(-75,-47,150);
     pros::delay(200);
     }
-  chassis.moveToPoint(75,-48,2000, {.forwards = false}, true);
-  pros::delay(750);
-  //score long
-  topOuttake();
-  loaderFork.retract();
-  pros::delay(1000);
-  chassis.moveToPose(-48,-36,270,400,{.minSpeed = 72});
-  Descore.extend();
-  left_motors.set_brake_mode_all(pros::MotorBrake::hold);
-  right_motors.set_brake_mode_all(pros::MotorBrake::hold);
-  chassis.moveToPoint(-11,-36,200,{.forwards = false, .maxSpeed=60});
+    //top score
+    chassis.moveToPoint(48,-48,3200,{.forwards = false});
+    pros::delay(900);
+    topOuttake();
+    // chassis.setPose(chassis.getPose().x, dWest.get_distance()+wDistCenter-70, chassis.getPose().theta);
+    // pros::lcd::print(3, "westPredict: %f", dWest.get_distance()/25.4+wDistCenter-70); // w
+    // pros::lcd::print(4, "distance w: %f", dWest.get_distance()); // w
+    chassis.moveToPoint(-37,-39,5000);
+    chassis.turnToHeading(270,500);
+    //descore
+    Descore.retract();
+    left_motors.set_brake_mode_all(pros::MotorBrake::hold);
+    right_motors.set_brake_mode_all(pros::MotorBrake::hold);
+    chassis.moveToPoint(-3,-39,1000,{.forwards = false,.maxSpeed=55});
 }
 
 
@@ -390,7 +392,14 @@ void leftQuick(){
   chassis.turnToHeading(270,2000);
   //go to loader
   loaderFork.extend();
-  intake();
+    intake();
+    //wiggle in - - match loader
+    pros::delay(125);
+    //TODO: Tune jiggle so only grab bottom 3
+    for(int move1=0;move1<pimpJiggle;move1++){
+      chassis.moveToPoint(-75,-46.5,150);
+    pros::delay(200);
+    }
   pros::delay(3000);
   //TODO: tune timing
   chassis.moveToPoint(75,48,2000, {.forwards = false}, true);
@@ -440,47 +449,98 @@ void soloAWP(){
 
 void right7(){
     Descore.extend();
-    chassis.setPose(-48,-12,90);
-    chassis.moveToPose(-48, -49,270, 3000);
+    chassis.setPose(-48,-12,180);
+    chassis.moveToPoint(-48, -49, 3000);
     chassis.turnToHeading(45,200, {.minSpeed = 72, .earlyExitRange = 8});
-    chassis.moveToPoint(-9,-9,500, {}, true);
-    pros::delay(200);
-    loaderFork.extend();
-    chassis.moveToPoint(-48, -46, 3000);
-    chassis.turnToHeading(180,200);
-    chassis.waitUntilDone();
-    pros::delay(200);
-    distanceCode("--");
-    pros::delay(100);
-    chassis.turnToHeading(270,2000);
-    //go to loader
-    loaderFork.extend();
     intake();
+    chassis.moveToPoint(-9,-9,900, {}, true);
+    pros::delay(700);
+    loaderFork.extend();
+    chassis.moveToPoint(-48,-46.5,1500);
+    chassis.turnToHeading(180,2000);
+    chassis.waitUntilDone();
+    pros::delay(50);
+    distanceCode("--");
+    chassis.turnToHeading(270,500);
     //wiggle in - - match loader
     pros::delay(125);
     for(int move1=0;move1<pimpJiggle;move1++){
-      chassis.moveToPoint(-75,-46.5,150);
+      chassis.moveToPoint(-75,-47,150);
+    pros::delay(200);
+    }
+    //top score
+    chassis.moveToPoint(48,-48,3200,{.forwards = false});
+    pros::delay(900);
+    topOuttake();
+    // chassis.setPose(chassis.getPose().x, dWest.get_distance()+wDistCenter-70, chassis.getPose().theta);
+    // pros::lcd::print(3, "westPredict: %f", dWest.get_distance()/25.4+wDistCenter-70); // w
+    // pros::lcd::print(4, "distance w: %f", dWest.get_distance()); // w
+    chassis.moveToPoint(-37,-36.5,5000);
+    chassis.turnToHeading(270,500);
+    //descore
+    Descore.retract();
+    left_motors.set_brake_mode_all(pros::MotorBrake::hold);
+    right_motors.set_brake_mode_all(pros::MotorBrake::hold);
+    chassis.moveToPoint(-8,-36.5,500,{.forwards = false,.maxSpeed=95});
+
+}
+
+void left7(){
+
+    Descore.extend();
+    chassis.setPose(-48,12,180);
+    chassis.moveToPoint(-48, 49, 3000);
+    chassis.turnToHeading(135,200, {.minSpeed = 72, .earlyExitRange = 8});
+    intake();
+    chassis.moveToPoint(-9,9,500, {}, true);
+    pros::delay(200);
+    loaderFork.extend();
+    chassis.moveToPoint(-48, 46, 3000, {.forwards = false});
+    chassis.turnToHeading(180,200);
+    chassis.waitUntilDone();
+    pros::delay(200);
+    //Distance
+    chassis.setPose(
+    chassis.getPose().x,
+    70-dSouth.get_distance()/25.4-sDistCenter,
+    chassis.getPose().theta);
+    chassis.waitUntilDone();
+    if(chassis.getPose().y<posnegLoaderY-.5){ // Closer to the wall, need to back up
+      chassis.moveToPoint(-48,posnegLoaderY,500,{.forwards = false});
+    }else if(chassis.getPose().y>posnegLoaderY+.5){ // further from the wall, need to go forward
+      chassis.moveToPoint(-48,posnegLoaderY,500);
+    }
+    pros::delay(100);
+    chassis.turnToHeading(270,2000);
+    //wiggle in - + match loader
+    pros::delay(125);
+    for(int move1=0;move1<pimpJiggle;move1++){
+      chassis.moveToPoint(-75,negposLoaderY,150);
     pros::delay(200);
     }
     //top score & reset pose
-    chassis.moveToPoint(48,-48,5000,{.forwards = false});
+    chassis.moveToPoint(48,48,5000,{.forwards = false});
     pros::delay(900);
     topOuttake();
     chassis.turnToHeading(90,1000);
-    chassis.setPose(chassis.getPose().x,dEast.get_distance()/25.4+eDistCenter-70,chassis.getPose().theta);
+    //TODO: add west dist sensor
+    chassis.setPose(chassis.getPose().x,70-dEast.get_distance()/25.4-eDistCenter,chassis.getPose().theta);
     pros::delay(750);
     bottomOuttake();
     pros::delay(500);
     topOuttake();
     pros::delay(1500);
-    chassis.moveToPoint(-48,-36,5000);
+    chassis.moveToPoint(-48,36,5000);
     chassis.turnToHeading(270,500);
+    //descore
     Descore.retract();
-    chassis.moveToPoint(-8,-48,500,{.forwards = false,.maxSpeed=45});
+    left_motors.set_brake_mode_all(pros::MotorBrake::hold);
+    right_motors.set_brake_mode_all(pros::MotorBrake::hold);
+    chassis.moveToPoint(-8,60,500,{.forwards = false,.maxSpeed=45});
 
-}
 
-void left7(){
+
+
     Descore.extend();
     chassis.setPose(-48,12,90);
     chassis.moveToPose(-48, 49,270, 3000);
@@ -488,13 +548,11 @@ void left7(){
     chassis.moveToPoint(-9,9,500, {}, true);
     pros::delay(200);
     loaderFork.extend();
-    pros::delay(500);
-    loaderFork.retract();
-    chassis.setPose(-48,12,180);
-    chassis.moveToPoint(-48, 46, 3000,{},false);
+    chassis.moveToPoint(-48, 46, 3000);
+    chassis.turnToHeading(180,200);
     chassis.waitUntilDone();
     pros::delay(200);
-    distanceCode("--");
+    
     pros::delay(100);
     chassis.turnToHeading(270,2000);
     //go to loader
@@ -506,26 +564,23 @@ void left7(){
       chassis.moveToPoint(-75,46.5,150);
     pros::delay(200);
     }
-  //grab loader and score 4 in long
-  chassis.moveToPose(-48, 49,270, 3000);
-  chassis.turnToHeading(270,2000);
-  //go to loader
-  loaderFork.extend();
-  intake();
-  pros::delay(3000);
-  //TODO: tune timing
-  chassis.moveToPoint(78,48,2000, {.forwards = false}, true);
-  pros::delay(750);
-  //score long
-  topOuttake();
-  loaderFork.retract();
-  pros::delay(1000);
-  //move 4 long balls into control
-  chassis.moveToPose(-22,36,315, 500, {.forwards = false, .minSpeed = 72, .earlyExitRange = 8});
-  Descore.extend();
-  left_motors.set_brake_mode_all(pros::MotorBrake::hold);
-  right_motors.set_brake_mode_all(pros::MotorBrake::hold);
-  chassis.moveToPoint(-12,36,200, {.forwards = false, .maxSpeed = 45});
+    //top score & reset pose
+    chassis.moveToPoint(48,48,5000,{.forwards = false});
+    pros::delay(900);
+    topOuttake();
+    chassis.turnToHeading(90,1000);
+    chassis.setPose(chassis.getPose().x,dEast.get_distance()/25.4+eDistCenter-70,chassis.getPose().theta);
+    pros::delay(750);
+    bottomOuttake();
+    pros::delay(500);
+    topOuttake();
+    pros::delay(1500);
+    chassis.moveToPoint(48,60,5000);
+    chassis.turnToHeading(270,500);
+    //descore
+    Descore.retract();
+    chassis.moveToPoint(8,60,500,{.forwards = false,.maxSpeed=45});
+
 }
 
 
