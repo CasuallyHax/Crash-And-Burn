@@ -46,10 +46,10 @@ const float sDistCenter = 1.5;
 const float eDistCenter = 3.25;
 const float wDistCenter = 4.495;
 
-const float negnegLoaderY = -45.5;
-const float posnegLoaderY = -46;
-const float posposLoaderY = 48;
-const float negposLoaderY = 48;
+const float negnegLoaderY = -46.75;
+const float posnegLoaderY = -46.75;
+const float posposLoaderY = 46.75;
+const float negposLoaderY = 46.75;
 
 double seventy = 70;
 void distanceCode(std::string distance){
@@ -74,9 +74,9 @@ void distanceCode(std::string distance){
     chassis.getPose().theta); // keep the same theta
     chassis.waitUntilDone();
     if(chassis.getPose().y<negnegLoaderY-.5){ // Closer to the wall, need to back up
-      chassis.moveToPoint(-48,-46.5,500,{.forwards = false});
+      chassis.moveToPoint(-48,-46.75,500,{.forwards = false});
     }else if(chassis.getPose().y>negnegLoaderY+.5){ // further from the wall, need to go forward
-      chassis.moveToPoint(-48,-46.5,500);
+      chassis.moveToPoint(-48,-46.75,500);
     }
     break;
     
@@ -135,7 +135,7 @@ void skills1(){
     left_motors.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
     Descore.extend();
     chassis.setPose(-48,-12,180);
-    chassis.moveToPoint(-48, -46, 3000,{},false);
+    chassis.moveToPoint(-48, -46.75, 3000,{},false);
     chassis.waitUntilDone();
     pros::delay(200);
     distanceCode("--");
@@ -147,7 +147,7 @@ void skills1(){
     //wiggle in - - match loader
     pros::delay(125);
     for(int move1=0;move1<pibJiggle;move1++){
-      chassis.moveToPoint(-75,-46.5,150);
+      chassis.moveToPoint(-75,-46.75,150);
       pros::delay(200);
     }
     intakeStop();
@@ -205,7 +205,7 @@ void skills1(){
     //match load + + and wiggle
     chassis.moveToPoint(48,posposLoaderY,1700, {.maxSpeed= 85,.minSpeed = 40,.earlyExitRange = 5}); // go forwards a little, and then jiggle forwards
     for(int move1=0;move1<pibJiggle;move1++){
-      chassis.moveToPoint(70,48,150);
+      chassis.moveToPoint(70,46.75,150);
       pros::delay(200);
     }
     //go to - + and score
@@ -236,12 +236,12 @@ void skills1(){
     //wiggle
     chassis.moveToPoint(-48,negposLoaderY,1700, {.maxSpeed= 85,.minSpeed = 40,.earlyExitRange = 5});
     for(int move1=0;move1<pibJiggle;move1++){
-      chassis.moveToPoint(-75,negposLoaderY,150);
+      chassis.moveToPoint(-75,negposLoaderY-.4,150);
       pros::delay(200);
     }
     pros::delay(500);
     //score - +
-    chassis.moveToPoint(75,50,3000, {.forwards = false},true);
+    chassis.moveToPoint(75,48,3000, {.forwards = false},true);
     pros::delay(200);
     loaderFork.retract();
     pros::delay(800);
@@ -354,7 +354,7 @@ void leftFull(){
 const int pimpJiggle1 = 11;
 void rightQuick(){
     chassis.setPose(-48,-12,180);
-    chassis.moveToPoint(-48,-46.5,1500);
+    chassis.moveToPoint(-48,-46.75,1500);
     chassis.turnToHeading(180,2000);
     chassis.waitUntilDone();
     pros::delay(50);
@@ -365,7 +365,7 @@ void rightQuick(){
     //wiggle in - - match loader
     pros::delay(125);
     for(int move1=0;move1<pimpJiggle1;move1++){
-      chassis.moveToPoint(-75,-47,150);
+      chassis.moveToPoint(-75,-46.75,150);
     pros::delay(200);
     }
     //top score
@@ -381,38 +381,39 @@ void rightQuick(){
     Descore.retract();
     left_motors.set_brake_mode_all(pros::MotorBrake::hold);
     right_motors.set_brake_mode_all(pros::MotorBrake::hold);
-    chassis.moveToPoint(-3,-39,1000,{.forwards = false,.maxSpeed=55});
+    chassis.moveToPoint(-9,-39,1500,{.forwards = false,.maxSpeed=55});
+    loaderFork.retract();
 }
 
 
 void leftQuick(){
-  chassis.setPose(-48,12,0);
-  //grab loader and score 4 in long
-  chassis.moveToPose(-48, 49,270, 3000);
-  chassis.turnToHeading(270,2000);
-  //go to loader
-  loaderFork.extend();
+    chassis.setPose(-48,12,0);
+    chassis.moveToPoint(-48,46.75,1500);
+    chassis.turnToHeading(180,2000);
+    chassis.turnToHeading(270,500);
     intake();
+    loaderFork.extend();
     //wiggle in - - match loader
     pros::delay(125);
-    //TODO: Tune jiggle so only grab bottom 3
-    for(int move1=0;move1<pimpJiggle;move1++){
-      chassis.moveToPoint(-75,-46.5,150);
+    for(int move1=0;move1<pimpJiggle1;move1++){
+      chassis.moveToPoint(-75,-46.75,150);
     pros::delay(200);
     }
-  pros::delay(3000);
-  //TODO: tune timing
-  chassis.moveToPoint(75,48,2000, {.forwards = false}, true);
-  pros::delay(750);
-  //score long
-  topOuttake();
-  loaderFork.retract();
-  pros::delay(1000);
-  chassis.moveToPose(-48,60,270,400,{.maxSpeed = 45});
-  Descore.retract();
-  left_motors.set_brake_mode_all(pros::MotorBrake::hold);
-  right_motors.set_brake_mode_all(pros::MotorBrake::hold);
-  chassis.moveToPoint(-8,60,200,{.forwards = false,.maxSpeed= 45});
+    //top score
+    chassis.moveToPoint(48,48,3200,{.forwards = false});
+    pros::delay(900);
+    topOuttake();
+    // chassis.setPose(chassis.getPose().x, dWest.get_distance()+wDistCenter-70, chassis.getPose().theta);
+    // pros::lcd::print(3, "westPredict: %f", dWest.get_distance()/25.4+wDistCenter-70); // w
+    // pros::lcd::print(4, "distance w: %f", dWest.get_distance()); // w
+    chassis.moveToPoint(-37,60,5000);
+    chassis.turnToHeading(270,500);
+    //descore
+    Descore.retract();
+    left_motors.set_brake_mode_all(pros::MotorBrake::hold);
+    right_motors.set_brake_mode_all(pros::MotorBrake::hold);
+    chassis.moveToPoint(-3,60,1500,{.forwards = false,.maxSpeed=55});
+    loaderFork.retract();
 }
 
 
@@ -456,7 +457,7 @@ void right7(){
     chassis.moveToPoint(-9,-9,900, {}, true);
     pros::delay(700);
     loaderFork.extend();
-    chassis.moveToPoint(-48,-46.5,1500);
+    chassis.moveToPoint(-48,-46.75,1500);
     chassis.turnToHeading(180,2000);
     chassis.waitUntilDone();
     pros::delay(50);
@@ -465,7 +466,7 @@ void right7(){
     //wiggle in - - match loader
     pros::delay(125);
     for(int move1=0;move1<pimpJiggle;move1++){
-      chassis.moveToPoint(-75,-47,150);
+      chassis.moveToPoint(-75,-46.75,150);
     pros::delay(200);
     }
     //top score
@@ -481,7 +482,7 @@ void right7(){
     Descore.retract();
     left_motors.set_brake_mode_all(pros::MotorBrake::hold);
     right_motors.set_brake_mode_all(pros::MotorBrake::hold);
-    chassis.moveToPoint(-8,-36.5,500,{.forwards = false,.maxSpeed=95});
+    chassis.moveToPoint(-5,-36.5,500,{.forwards = false,.maxSpeed=95});
 
 }
 

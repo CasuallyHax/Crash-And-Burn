@@ -26,10 +26,11 @@ const char* autons[] = {
     "Left 7 Long",
     "Left Quick",
     "AWP",
-    "Skills"
+    "Skills",
+    "drive24"
 };
 int autonIndex = 0;
-const int numAutons = 8; // Number of auton routines
+const int numAutons = 9; // Number of auton routines
 
 
 void initialize() {
@@ -124,6 +125,9 @@ switch(autonIndex) {
         case 7: // Skills
           skills1();
             break;
+          case 8:
+            drive24();
+              break;
     }
 
 }
@@ -249,7 +253,7 @@ void opcontrol() {
       //         pros::lcd::print(0, "X: %f", chassis.getPose().x); // x
       //         pros::lcd::print(1, "Y: %f", chassis.getPose().y); // y
       //         pros::lcd::print(2, "Theta: %f", chassis.getPose().theta); // heading
-              pros::lcd::print(3, "westPredict: %f", dWest.get_distance()/25.4+wDistCenter-70); // w
+      //         pros::lcd::print(3, "westPredict: %f", dWest.get_distance()/25.4+wDistCenter-70); // w
       //         pros::lcd::print(4, "eastPredict: %f", dEast.get_distance()/25.4+eDistCenter-70); // e
       //         pros::lcd::print(5, "sotuhPredict: %f", 70-dSouth.get_distance()/25.4-sDistCenter); // s  
       //         pros::lcd::print(9, "nortActual: %f", dNorth.get_distance()/25.4); // n
@@ -272,23 +276,48 @@ void opcontrol() {
     // chassis.moveToPoint(0,0,10000);
     // chassis.turnToHeading(0,5000);
     // }
-
+const int pimpJiggle1 = 11;
 
 
 //AUTON TESTING
 
-
-
-
-
+    chassis.setPose(-48,-12,180);
+    chassis.moveToPoint(-48,-46.75,1500);
+    chassis.turnToHeading(180,2000);
+    chassis.waitUntilDone();
+    pros::delay(50);
+    distanceCode("--");
+    chassis.turnToHeading(270,500);
+    intake();
+    loaderFork.extend();
+    //wiggle in - - match loader
+    pros::delay(125);
+    for(int move1=0;move1<pimpJiggle1;move1++){
+      chassis.moveToPoint(-75,-46.75,150);
+    pros::delay(200);
+    }
+    //top score
+    chassis.moveToPoint(48,-48,3200,{.forwards = false});
+    pros::delay(900);
+    topOuttake();
+    // chassis.setPose(chassis.getPose().x, dWest.get_distance()+wDistCenter-70, chassis.getPose().theta);
+    // pros::lcd::print(3, "westPredict: %f", dWest.get_distance()/25.4+wDistCenter-70); // w
+    // pros::lcd::print(4, "distance w: %f", dWest.get_distance()); // w
+    chassis.moveToPoint(-37,-39,5000);
+    chassis.turnToHeading(270,500);
+    //descore
+    Descore.retract();
+    left_motors.set_brake_mode_all(pros::MotorBrake::hold);
+    right_motors.set_brake_mode_all(pros::MotorBrake::hold);
+    chassis.moveToPoint(-9,-39,1500,{.forwards = false,.maxSpeed=55});
+    loaderFork.retract();
 
 
 // //DRIVE CODE
 //     right_motors.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
 //     left_motors.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
 //     // loop forever
-//     Descore.extend();
-//     loaderFork.extend();
+//     loaderFork.retract();
 //     while (true) {
 //         // get left y and right x positions
 //         int leftY = (controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y))*.8;
