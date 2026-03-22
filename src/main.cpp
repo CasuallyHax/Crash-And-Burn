@@ -8,7 +8,7 @@
 #include "pros/motors.h"
 #include "pros/motors.hpp"
 #include "pros/rtos.hpp"
-//#include "robot/monte.hpp"
+#include "robot/monte.hpp"
 #include "robot/skills.h"
 #include <iostream>
 #include <type_traits>
@@ -20,16 +20,18 @@
 // Array of autonomous routine names (for display only)
 const char* autons[] = {
     "Right Full",
-    "Right 7 Long", 
+    "Right 7 Long",
     "Right Quick",
     "Left Full",
     "Left 7 Long",
     "Left Quick",
     "AWP",
-    "Skills"
+    "Skills",
+    "Telemetry",
+    "MCL Test"
 };
 int autonIndex = 0;
-const int numAutons = 8; // Number of auton routines
+const int numAutons = 10; // Number of auton routines
 
 
 void initialize() {
@@ -61,6 +63,8 @@ void initialize() {
     
     // Display initial selection
     pros::lcd::print(2, "Selected: %s", autons[autonIndex]);
+
+    pros::Task mclTask(MCL::taskFn);
 }
 
 /**
@@ -123,6 +127,12 @@ switch(autonIndex) {
             break;
         case 7: // Skills
           skills1();
+            break;
+        case 8: // Telemetry
+          telemetry();
+            break;
+        case 9: // MCL Test
+          testMCL();
             break;
     }
 

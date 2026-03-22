@@ -26,6 +26,8 @@ void left7();
 void right7();
 void drive24();
 void turn90();
+void telemetry();
+void testMCL();
 
 extern const float negnegLoaderY;
 extern const float posnegLoaderY;

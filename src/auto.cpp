@@ -5,6 +5,7 @@
 #include "pros/motors.h"
 #include "pros/rtos.hpp"
 #include "robot/auton.hpp"
+#include "robot/monte.hpp"
 #include "helpers.hpp"
 #include <cmath>
 #include <iostream>
@@ -128,8 +129,6 @@ const int pibJiggle = 25;
 
 //match autons
 void skills1(){
-//TODO: shorten timings
-//TODO: move this code to auton after testing
     //Start touching red park
     right_motors.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
     left_motors.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
@@ -290,7 +289,6 @@ void rightFull(){
   loaderFork.extend();
   intake();
   pros::delay(3000);
-  //TODO: tune timing
   chassis.moveToPoint(-78,-48,2000, {.forwards = false}, true);
   pros::delay(750);
   //score long
@@ -335,7 +333,6 @@ void leftFull(){
   chassis.moveToPoint(-48,48,2000);
   chassis.turnToHeading(135,200);
   chassis.moveToPoint(-17,17,500,{},true);
-  //TODO: tune delay
   pros::delay(200);
   loaderFork.extend();
   pros::delay(500);
@@ -395,13 +392,11 @@ void leftQuick(){
     intake();
     //wiggle in - - match loader
     pros::delay(125);
-    //TODO: Tune jiggle so only grab bottom 3
     for(int move1=0;move1<pimpJiggle;move1++){
       chassis.moveToPoint(-75,-46.5,150);
     pros::delay(200);
     }
   pros::delay(3000);
-  //TODO: tune timing
   chassis.moveToPoint(75,48,2000, {.forwards = false}, true);
   pros::delay(750);
   //score long
@@ -523,7 +518,6 @@ void left7(){
     pros::delay(900);
     topOuttake();
     chassis.turnToHeading(90,1000);
-    //TODO: add west dist sensor
     chassis.setPose(chassis.getPose().x,70-dEast.get_distance()/25.4-eDistCenter,chassis.getPose().theta);
     pros::delay(750);
     bottomOuttake();
@@ -597,6 +591,73 @@ void turn90(){
   chassis.setBrakeMode(pros::E_MOTOR_BRAKE_BRAKE);
   chassis.setPose(0,0,0);
   chassis.turnToHeading(90,5000);
+}
+// Drives an L-shaped path near two walls then returns to origin.
+// At each waypoint, pauses 2s showing odom vs MCL vs diff on the LCD.
+// Place robot at (-48, -48, 0) — bottom-left corner, facing north.
+void testMCL(){
+    chassis.setBrakeMode(pros::E_MOTOR_BRAKE_BRAKE);
+    chassis.setPose(-48, -48, 0);
+    MCL::localizer.init(-48, -48, 0);
+    pros::lcd::print(0, "MCL TEST: starting");
+    pros::delay(1000);
+
+    // Leg 1: north along west wall — South + West sensors close
+    chassis.moveToPoint(-48, 0, 5000);
+    chassis.waitUntilDone();
+    {
+        lemlib::Pose o = chassis.getPose();
+        lemlib::Pose m = MCL::localizer.getPose();
+        pros::lcd::print(0, "LEG1 odom  x:%.1f y:%.1f t:%.1f", o.x, o.y, o.theta);
+        pros::lcd::print(1, "LEG1 mcl   x:%.1f y:%.1f t:%.1f", m.x, m.y, m.theta);
+        pros::lcd::print(2, "LEG1 diff  x:%.1f y:%.1f t:%.1f", m.x-o.x, m.y-o.y, m.theta-o.theta);
+    }
+    pros::delay(2000);
+
+    // Leg 2: turn east, drive along horizontal — South sensor active
+    chassis.turnToHeading(90, 3000);
+    chassis.waitUntilDone();
+    chassis.moveToPoint(0, 0, 5000);
+    chassis.waitUntilDone();
+    {
+        lemlib::Pose o = chassis.getPose();
+        lemlib::Pose m = MCL::localizer.getPose();
+        pros::lcd::print(3, "LEG2 odom  x:%.1f y:%.1f t:%.1f", o.x, o.y, o.theta);
+        pros::lcd::print(4, "LEG2 mcl   x:%.1f y:%.1f t:%.1f", m.x, m.y, m.theta);
+        pros::lcd::print(5, "LEG2 diff  x:%.1f y:%.1f t:%.1f", m.x-o.x, m.y-o.y, m.theta-o.theta);
+    }
+    pros::delay(2000);
+
+    // Apply MCL correction and show final corrected pose
+    MCL::localizer.applyCorrection();
+    {
+        lemlib::Pose o = chassis.getPose();
+        pros::lcd::print(6, "CORRECTED  x:%.1f y:%.1f t:%.1f", o.x, o.y, o.theta);
+        pros::lcd::print(7, "DONE");
+    }
+}
+
+void telemetry(){
+  while(true){
+    lemlib::Pose odom = chassis.getPose();
+    lemlib::Pose mcl  = MCL::localizer.getPose();
+
+    float dN = dNorth.get_distance() / 25.4f;
+    float dS = dSouth.get_distance() / 25.4f;
+    float dE = dEast.get_distance()  / 25.4f;
+    float dW = dWest.get_distance()  / 25.4f;
+
+    pros::lcd::print(0, "ODOM x:%.1f y:%.1f t:%.1f", odom.x, odom.y, odom.theta);
+    pros::lcd::print(1, "MCL  x:%.1f y:%.1f t:%.1f", mcl.x,  mcl.y,  mcl.theta);
+    pros::lcd::print(2, "DIFF x:%.1f y:%.1f t:%.1f", mcl.x-odom.x, mcl.y-odom.y, mcl.theta-odom.theta);
+    pros::lcd::print(3, "N:%.1f S:%.1f E:%.1f W:%.1f", dN, dS, dE, dW);
+    pros::lcd::print(4, "N:%s S:%s E:%s W:%s",
+      dN < MCL::MAX_RANGE_IN ? "ON " : "off",
+      dS < MCL::MAX_RANGE_IN ? "ON " : "off",
+      dE < MCL::MAX_RANGE_IN ? "ON " : "off",
+      dW < MCL::MAX_RANGE_IN ? "ON " : "off");
+    pros::delay(100);
+  }
 }
 
 // void test360() {
