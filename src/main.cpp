@@ -1,108 +1,67 @@
 #include "main.h"
-#include "lemlib/api.hpp" // IWYU pragma: keep
+#include "globals.hpp"
+#include "lemlib/api.hpp"
 #include "lemlib/chassis/chassis.hpp"
-//ASSET(PushBackAutons1);
+#include "lemlib/timer.hpp"
+#include "main.h"
+#include "pros/device.hpp"
+#include "pros/motors.h"
+#include "pros/motors.hpp"
+#include "pros/rtos.hpp"
+//#include "robot/monte.hpp"
+#include "robot/skills.h"
+#include <iostream>
+#include <type_traits>
+#include "helpers.hpp"
+#include "robot/auton.hpp"
 
-pros::MotorGroup left_motors({-11}, pros::MotorGearset::green); // left motors on ports 1, 2, 3
-pros::MotorGroup right_motors({1}, pros::MotorGearset::green); // right motors on ports 4, 5, 6
+// ========== AUTON SELECTOR ==========
 
-// create a v5 rotation sensor on port 1
-pros::Rotation vertical_tracker(20);
-
-// create a v5 rotation sensor on port 1
-pros::Rotation horizontal_tracker(10);
-
-// drivetrain settings
-lemlib::Drivetrain drivetrain(&left_motors, // left motor group
-                              &right_motors, // right motor group
-                              9.75, // 10 inch track width
-                              lemlib::Omniwheel::NEW_325, // using new 4" omnis
-                              200, // drivetrain rpm is 360
-                              2 // horizontal drift is 2 (for now)
-);
-
-// create an imu on port 10
-pros::Imu imu(3);
-
-/**
- * A callback function for LLEMU's center button.
- *
- * When this callback is fired, it will toggle line 2 of the LCD text between
- * "I was pressed!" and nothing.
- */
+// Array of autonomous routine names (for display only)
+const char* autons[] = {
+    "Right Full",
+    "Right 7 Long", 
+    "Right Quick",
+    "Left Full",
+    "Left 7 Long",
+    "Left Quick",
+    "AWP",
+    "Skills",
+    "drive24"
+};
+int autonIndex = 0;
+const int numAutons = 9; // Number of auton routines
 
 
-/**
- * Runs initialization code. This occurs as soon as the program is started.
- *
- * All other competition modes are blocked by initialize; it is recommended
- * to keep execution time for this mode under a few seconds.
- */
-// void initialize() {
-// 	pros::lcd::initialize();
-// 	pros::lcd::set_text(1, "Hello PROS User!");
-
-// 	pros::lcd::register_btn1_cb(on_center_button);
-// }
-
-// vertical tracking wheel
-lemlib::TrackingWheel vertical_tracking_wheel(&vertical_tracker, lemlib::Omniwheel::NEW_275, -1);
-
-lemlib::TrackingWheel horizontal_tracking_wheel(&horizontal_tracker, lemlib::Omniwheel::NEW_275, -7.5);
-
-lemlib::OdomSensors sensors(&vertical_tracking_wheel, // vertical tracking wheel 1, set to null
-                            nullptr, // vertical tracking wheel 2, set to nullptr as we are using IMEs
-                            &horizontal_tracking_wheel, // horizontal tracking wheel 1
-                            nullptr, // horizontal tracking wheel 2, set to nullptr as we don't have a second one
-                            &imu // inertial sensor
-);
-
-// lateral PID controller
-lemlib::ControllerSettings lateral_controller(20, // proportional gain (kP)
-                                              0, // integral gain (kI)
-                                              40, // derivative gain (kD)
-                                              3, // anti windup
-                                              1, // small error range, in inches
-                                              100, // small error range timeout, in milliseconds
-                                              3, // large error range, in inches
-                                              500, // large error range timeout, in milliseconds
-                                              0 // maximum acceleration (slew)
-);
-
-// angular PID controller
-lemlib::ControllerSettings angular_controller(4, // proportional gain (kP)
-                                              0, // integral gain (kI)
-                                              30, // derivative gain (kD)
-                                              0, // anti windup
-                                              0, // small error range, in degrees
-                                              0, // small error range timeout, in milliseconds
-                                              0, // large error range, in degrees
-                                              0, // large error range timeout, in milliseconds
-                                              0 // maximum acceleration (slew)
-);
-
-// create the chassis
-lemlib::Chassis chassis(drivetrain, // drivetrain settings
-                        lateral_controller, // lateral PID settings
-                        angular_controller, // angular PID settings
-                        sensors // odometry sensors
-);
-
-// this runs at the start of the program
 void initialize() {
-    pros::lcd::initialize(); // initialize brain screen
-    chassis.calibrate();
+    pros::lcd::initialize();
 
-    pros::Task screen_task([&]() {
-        while (true) {
-            // print robot location to the brain screen
-            pros::lcd::print(0, "X: %f", chassis.getPose().x); // x
-            pros::lcd::print(1, "Y: %f", chassis.getPose().y); // y
-            pros::lcd::print(2, "Theta: %f", chassis.getPose().theta); // heading
-            // delay to save resources
-            pros::delay(20);
+    chassis.calibrate();
+    // Left button - cycle backward
+    pros::lcd::register_btn0_cb([]() {
+        autonIndex--;
+        if (autonIndex < 0) {
+            autonIndex = numAutons - 1; // Wrap around
         }
+        pros::lcd::print(2, "Selected: %s", autons[autonIndex]);
     });
+    
+    // Center button - could be used to confirm or just display
+    pros::lcd::register_btn1_cb([]() {
+        pros::lcd::print(2, "Selected: %s", autons[autonIndex]);
+    });
+    
+    // Right button - cycle forward
+    pros::lcd::register_btn2_cb([]() {
+        autonIndex++;
+        if (autonIndex >= numAutons) {
+            autonIndex = 0; // Wrap around
+        }
+        pros::lcd::print(2, "Selected: %s", autons[autonIndex]);
+    });
+    
+    // Display initial selection
+    pros::lcd::print(2, "Selected: %s", autons[autonIndex]);
 }
 
 /**
@@ -134,15 +93,42 @@ void competition_initialize() {}
  * will be stopped. Re-enabling the robot will restart the task, not re-start it
  * from where it left off.
  */
+const int pimpJiggle = 15; 
 void autonomous() {
-    chassis.setPose(0,0,0);
 
-    //PID tuning, comment out when not using
-    //Lateral PID tuning
-//    chassis.moveToPoint(0,24, 10000);
+switch(autonIndex) {
+        case 0: // Right Full
+          rightFull();
+            break;
 
-    //Angular PID tuning
-//    chassis.follow(PushBackAutons1, 15, 20000);
+        case 1: // Right 7 Long
+          right7();
+            break;
+        case 2: // Right Quick
+          rightQuick();
+            break;
+
+        case 3: // Left Full
+          leftFull();
+            break;
+
+        case 4: // Left 7 Long
+          left7();
+            break;
+
+        case 5: // Left Quick
+          leftQuick();
+            break;
+        case 6: // AWP
+          soloAWP();
+            break;
+        case 7: // Skills
+          skills1();
+            break;
+          case 8:
+            drive24();
+              break;
+    }
 
 }
 
@@ -159,19 +145,186 @@ void autonomous() {
  * operator control task will be stopped. Re-enabling the robot will restart the
  * task, not resume it from where it left off.
  */
-pros::Controller controller(pros::E_CONTROLLER_MASTER);
 
 void opcontrol() {
-    // loop forever
-    while (true) {
-        // get left y and right x positions
-        int leftY = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
-        int rightX = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
 
-        // move the robot
-        chassis.arcade(leftY, rightX);
+//  pros::Task stallTask(stallRecoveryTask);
 
-        // delay to save resources
-        pros::delay(25);
+
+
+//OLD AUTO CODE DONT USE
+    // //Start touching red park
+    // chassis.setPose(-48,-12,180);
+    // chassis.moveToPoint(-48, -46, 3000);
+    // chassis.turnToHeading(270,2000);
+    // //go to loader
+    // loaderFork.extend();
+    // intake();
+    // pros::delay(500);
+    // //wiggle in - - match loader
+    // chassis.moveToPoint(-75,-46.5,3000);
+    // pros::delay(500);
+    // chassis.moveToPoint(75,-46.5,150, {.forwards = false});
+    // pros::delay(200);
+    // chassis.moveToPoint(-75,-46.5,3000);
+    // chassis.moveToPoint(75,-46.5,150, {.forwards = false});
+    // pros::delay(200);
+    // chassis.moveToPoint(-75,-46.5,3000);
+    // pros::delay(4750);
+    // //go to + - to score
+    // chassis.moveToPoint(-48,-50,3000, {.forwards = false, .minSpeed = 72, .earlyExitRange = 8});
+    // chassis.moveToPoint(-27.5, -62, 3000, {.forwards = false});
+    // chassis.moveToPoint(45, -62, 4000, {.forwards = false});
+    // loaderFork.retract();
+    // chassis.turnToHeading(0,500);
+    // chassis.moveToPoint(48,-48,2000);
+    // chassis.turnToHeading(90,500);
+    // // chassis.waitUntilDone();
+    // // distanceCode("East");
+    // // pros::delay(200);
+    //         //     // print robot location to the brain screen
+    //         // pros::lcd::print(0, "X: %f", chassis.getPose().x); // x
+    //         // pros::lcd::print(1, "Y: %f", chassis.getPose().y); // y
+    //         // pros::lcd::print(2, "Theta: %f", chassis.getPose().theta); // heading
+    // chassis.moveToPoint(0,-48,8000,{.forwards = false}, true);
+    // pros::delay(1000);
+    // topOuttake();
+    // loaderFork.extend();
+    // pros::delay(5000);
+    // //grab + - match loader and wiggle
+    // intake();
+    // chassis.moveToPose(80,-47.5,90,1500,{}, true);
+    // pros::delay(1500);
+    // chassis.moveToPose(-80,-47.5,90,150, {.forwards = false});
+    // chassis.moveToPose(80,-47.5,90,5000);
+    // chassis.moveToPose(-80,-47.5,90,150, {.forwards = false});
+    // chassis.moveToPose(80,-47.5,90,5000);
+    // //score in + -
+    // chassis.moveToPoint(0,-49,8000,{.forwards = false});
+    // pros::delay(1000);
+    // topOuttake();
+    // pros::delay(5000);
+    // //go to + + match loader
+    // intake();
+    // chassis.moveToPoint(40,-45,2000);
+    // chassis.turnToHeading(0,1000);
+    // chassis.moveToPoint(40,48,2500, {.maxSpeed = 100});
+    // chassis.turnToHeading(90, 1000);
+    // chassis.moveToPoint(70, 48, 3000, {}, false);
+    // //match load + + and wiggle
+    // pros::delay(1000);
+    // chassis.moveToPoint(-70,48,100,{.forwards = false});
+    // chassis.moveToPoint(70, 48, 5000, {}, false);
+    // loaderFork.retract();
+    // //go to - + and score
+    // chassis.moveToPoint(40,48,2500, {.forwards = false, .minSpeed = 72, .earlyExitRange = 8});
+    // chassis.moveToPoint(25,61,2000);
+    // chassis.moveToPoint(-48,61,5000);
+    // chassis.moveToPoint(-48,48,2000);
+    // chassis.moveToPoint(70,48,2000, {.forwards = false}, true);
+    // pros::delay(950);
+    // topOuttake();
+    // //grab - + match loader
+    // loaderFork.extend();
+    // pros::delay(7000);
+    // intake();
+    // //wiggle
+    // chassis.moveToPoint(-75,48,2000);
+    // chassis.moveToPoint(75,48,150, {.forwards = false});
+    // chassis.moveToPoint(-75,48,2000);
+    // chassis.moveToPoint(75,48,150, {.forwards = false});
+    // chassis.moveToPoint(-75,48,7000);
+    // //score - +
+    // chassis.moveToPoint(75,48,7000, {.forwards = false},true);
+    // pros::delay(850);
+    // topOuttake();
+    // pros::delay(7000);
+    // //park and clear parking
+    // chassis.moveToPoint(-63,21,3000);
+    // chassis.moveToPoint(-64,-100,500,{.minSpeed = 127});  
+
+
+
+
+// //PRINT VALUES
+      // chassis.setPose(0,0,0);
+      // while(1){
+      //                     // print robot location to the brain screen
+      //         pros::lcd::print(0, "X: %f", chassis.getPose().x); // x
+      //         pros::lcd::print(1, "Y: %f", chassis.getPose().y); // y
+      //         pros::lcd::print(2, "Theta: %f", chassis.getPose().theta); // heading
+      //         pros::lcd::print(3, "westPredict: %f", dWest.get_distance()/25.4+wDistCenter-70); // w
+      //         pros::lcd::print(4, "eastPredict: %f", dEast.get_distance()/25.4+eDistCenter-70); // e
+      //         pros::lcd::print(5, "sotuhPredict: %f", 70-dSouth.get_distance()/25.4-sDistCenter); // s  
+      //         pros::lcd::print(9, "nortActual: %f", dNorth.get_distance()/25.4); // n
+      //         pros::lcd::print(3, "eastActual: %f", dEast.get_distance()/25.4); // e
+      //         pros::lcd::print(6, "southActual: %f", dSouth.get_distance()/25.4); // s
+      //         pros::delay(100);
+      // }
+
+
+
+
+//TESTING SQUARE
+    // for(int x = 0; x<4;x++){
+    // chassis.moveToPoint(0,24,10000);
+    // chassis.turnToHeading(90,5000);
+    // chassis.moveToPoint(24,24,100000);
+    // chassis.turnToHeading(180,5000);
+    // chassis.moveToPoint(24,0,10000);
+    // chassis.turnToHeading(270,5000);
+    // chassis.moveToPoint(0,0,10000);
+    // chassis.turnToHeading(0,5000);
+    // }
+const int pimpJiggle1 = 11;
+
+
+//AUTON TESTING
+
+    chassis.setPose(-48,-12,180);
+    chassis.moveToPoint(-48,-46.75,1500);
+    chassis.turnToHeading(180,2000);
+    chassis.waitUntilDone();
+    pros::delay(50);
+    distanceCode("--");
+    chassis.turnToHeading(270,500);
+    intake();
+    loaderFork.extend();
+    //wiggle in - - match loader
+    pros::delay(125);
+    for(int move1=0;move1<pimpJiggle1;move1++){
+      chassis.moveToPoint(-75,-46.75,150);
+    pros::delay(200);
     }
+    //top score
+    chassis.moveToPoint(48,-48,3200,{.forwards = false});
+    pros::delay(900);
+    topOuttake();
+    // chassis.setPose(chassis.getPose().x, dWest.get_distance()+wDistCenter-70, chassis.getPose().theta);
+    // pros::lcd::print(3, "westPredict: %f", dWest.get_distance()/25.4+wDistCenter-70); // w
+    // pros::lcd::print(4, "distance w: %f", dWest.get_distance()); // w
+    chassis.moveToPoint(-37,-39,5000);
+    chassis.turnToHeading(270,500);
+    //descore
+    Descore.retract();
+    left_motors.set_brake_mode_all(pros::MotorBrake::hold);
+    right_motors.set_brake_mode_all(pros::MotorBrake::hold);
+    chassis.moveToPoint(-9,-39,1500,{.forwards = false,.maxSpeed=55});
+    loaderFork.retract();
+
+
+// //DRIVE CODE
+//     right_motors.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+//     left_motors.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+//     // loop forever
+//     loaderFork.retract();
+//     while (true) {
+//         // get left y and right x positions
+//         int leftY = (controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y))*.8;
+//         int rightX = (controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X))*.8;
+//         // move the robot
+//         chassis.arcade(leftY, rightX);
+//         controllerCode();
+//         pros::delay(20);// small delay for loop timing
+//     }
 }
